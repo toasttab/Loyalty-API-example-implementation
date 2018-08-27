@@ -1,0 +1,26 @@
+{
+  "name": "loyalty-api-example-implementation",
+  "version": "1.0.0",
+  "description": "An example implementation of our Loyalty API",
+  "main": "server.js",
+  "dependencies": {
+    "jsonwebtoken": "^8.3.0",
+    "lowdb": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "reset": "cp originalDB.json db.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toasttab/Loyalty-API-example-implementation.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/toasttab/Loyalty-API-example-implementation/issues"
+  },
+  "homepage": "https://github.com/toasttab/Loyalty-API-example-implementation#readme"
+}
