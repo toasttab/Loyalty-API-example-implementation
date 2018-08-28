@@ -39,13 +39,13 @@ function findByPhone(value) {
 
 function find(criteria) {
   if (criteria["firstName"]) {
-    return findByFirstName(criteria["firstName"]);
+    return findByFirstName(criteria["firstName"].toLowerCase());
   } else if (criteria["lastName"]) {
-    return findByLastName(criteria["lastName"]);
+    return findByLastName(criteria["lastName"].toLowerCase());
   } else if (criteria["email"]) {
-    return findByEmail(criteria["email"]);
+    return findByEmail(criteria["email"].toLowerCase());
   } else if (criteria["phone"]) {
-    return findByPhone(criteria["phone"]);
+    return findByPhone(criteria["phone"].toLowerCase());
   } else {
     throw "ERROR_INVALID_CRITERIA"
   }

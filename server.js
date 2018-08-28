@@ -55,21 +55,28 @@ http.createServer((req, res) => {
       var responseBody;
       switch(transactionType) {
         case 'LOYALTY_INQUIRE':
-            info = getPropOrErr(body, 'inquireTransactionInformation');
-            identifier = getPropOrErr(info, 'loyaltyIdentifier');
+            //info = getPropOrErr(body, 'inquireTransactionInformation');
+            identifier = getPropOrErr(body, 'loyaltyIdentifier');
             var account = accounts.inquire(identifier);
             responseBody = {
               accounts: account
             };
             return successResponse(res, responseBody);
           case 'LOYALTY_SEARCH':
-            info = getPropOrErr(body, 'searchTransactionInformation');
-            criteria = getPropOrErr(info, 'criteria');
+            //info = getPropOrErr(body, 'searchTransactionInformation');
+            criteria = getPropOrErr(body, 'criteria');
             var results = accounts.search(criteria);
             responseBody = {
               accounts: results
             };
             return successResponse(res, responseBody);
+          case 'LOYALTY_VALIDATE':
+          case 'LOYALTY_REDEEM':
+          case 'LOYALTY_ACCRUE':
+            // This is a simple point system: one dollar = one point
+            // So we only need the total check amount 
+
+          case 'LOYALTY_REVERSE':
         default:
           return errorResponse(res, 'ERROR_INVALID_TOAST_TRANSACTION_TYPE');
       }
