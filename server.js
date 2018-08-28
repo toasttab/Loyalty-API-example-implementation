@@ -3,6 +3,7 @@ const https = require('https')
 const jwt = require('jsonwebtoken')
 
 const accounts = require('./accounts')
+const transactions = require('./transactions')
 
 // get the public key for JWT verification
 https.get(publicKeyUrl(), (res) => {
@@ -50,8 +51,7 @@ http.createServer((req, res) => {
       console.log('Request recieved: ' + body);
       body = JSON.parse(body) // converting body string to JSON
       var info, identifier;
-      var amount;
-      var card;
+      var check, redemptions;
       var responseBody;
       switch(transactionType) {
         case 'LOYALTY_INQUIRE':
@@ -61,6 +61,7 @@ http.createServer((req, res) => {
             responseBody = {
               accounts: account
             };
+            transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_SEARCH':
             //info = getPropOrErr(body, 'searchTransactionInformation');
@@ -69,12 +70,14 @@ http.createServer((req, res) => {
             responseBody = {
               accounts: results
             };
+            transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_VALIDATE':
           case 'LOYALTY_REDEEM':
           case 'LOYALTY_ACCRUE':
-            // This is a simple point system: one dollar = one point
-            // So we only need the total check amount 
+            identifier = getPropOrErr(body, 'loyaltyIdentifier');
+            check = getPropOrErr(body, 'check');
+            redemptions = getPropOrErr(body, 'redemptions');
 
           case 'LOYALTY_REVERSE':
         default:
@@ -127,3 +130,4 @@ function publicKeyUrl() {
     return 'https://ws-sandbox-api.eng.toasttab.com/usermgmt/v1/oauth/token_key';
   }
 }
+

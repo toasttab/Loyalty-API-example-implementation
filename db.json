@@ -6,10 +6,10 @@
       "last_name": "Smith",
       "email": "a1@gmail.com",
       "phone": "111-111-1111",
-      "Points": "40",
+      "points": "40",
       "availableRewards": [
         {
-          "id":"4", 
+          "id": "4",
           "quantity": 2
         }
       ],
@@ -21,10 +21,10 @@
       "last_name": "Johnson",
       "email": "a2@gmail.com",
       "phone": "111-111-1111",
-      "Points": "0",
+      "points": "0",
       "availableRewards": [
         {
-          "id":"2", 
+          "id": "2",
           "quantity": 1
         }
       ],
@@ -36,21 +36,20 @@
       "last_name": "Williams",
       "email": "a3@gmail.com",
       "phone": "111-111-1111",
-      "Points": "80",
+      "points": "80",
       "availableRewards": [
         {
-          "id":"1", 
+          "id": "1",
           "quantity": 5
         },
         {
-          "id":"3", 
+          "id": "3",
           "quantity": 10
         }
       ],
       "active": true
     }
   ],
-
   "rewards": [
     {
       "id": "1",
@@ -87,6 +86,34 @@
       "type": "CURRENCY",
       "item_id": "2",
       "amount": "10"
+    }
+  ],
+  "transactions": [
+    {
+      "guid": "449191cb-1479-4046-a1e1-4ff761bffae5",
+      "method": "LOYALTY_ACCRUE",
+      "amount": 5,
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "40d052e0-9df4-4ed1-906e-9072a46f6cfa",
+      "method": "LOYALTY_REVERSE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "13ae2bf3-86a8-478a-aa7a-26a523cef4fe",
+      "method": "LOYALTY_REDEEM",
+      "amount": 2,
+      "redemptions": [
+        {
+          "id":"2", 
+          "quantity": 1
+        }
+      ],
+      "cardNumber": "2",
+      "reversed": false
     }
   ]
 }
