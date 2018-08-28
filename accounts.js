@@ -17,6 +17,34 @@ function search(criteria) {
   return result;
 }
 
+function accrue(identifier, points) {
+  var account = findByNumber(identifier);
+  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  var newPoints = account.points + points;
+  if (Math.floor(newPoints/50) > 0) {
+    var quantity = Math.floor(newPoints/50);
+    var availableRewards = account.availableRewards;
+    var reward;
+    for (var i in availableRewards) {
+      if (availableRewards[i].id == "2") {
+        reward = availableRewards[i];
+      }
+    }
+    if (reward) {
+      reward.quantity = reward.quantity + quantity;
+    } else {  
+      var redemption = {
+        "id":"2", 
+        "quantity": quantity
+      }
+      account.availableRewards.push(redemption);
+    }
+    newPoints = newPoints % 50;
+  }
+  account.points = newPoints;
+  db.update(account);
+}
+
 function findByNumber(value) {
   return db.find('loyalty_accounts', {number: value});
 }
@@ -65,4 +93,4 @@ function parseLoyaltyAccount(loyaltyAccount) {
   return account;
 }
 
-module.exports = {inquire, search};
+module.exports = {inquire, search, accrue};

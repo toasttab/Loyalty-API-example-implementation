@@ -78,7 +78,9 @@ http.createServer((req, res) => {
             identifier = getPropOrErr(body, 'loyaltyIdentifier');
             check = getPropOrErr(body, 'check');
             redemptions = getPropOrErr(body, 'redemptions');
-
+            var accruedPoints = accrue(identifier, check);
+            transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
+            return successResponse(res, responseBody);
           case 'LOYALTY_REVERSE':
         default:
           return errorResponse(res, 'ERROR_INVALID_TOAST_TRANSACTION_TYPE');
@@ -93,6 +95,7 @@ console.log('Server is up and listening at localhost:' + port);
 
 // Helper function
 function successResponse(res, responseBody) {
+  if (!responseBody) responseBody = {};
   responseBody['transactionStatus'] = 'ACCEPT';
   responseBody = JSON.stringify(responseBody);
   res.writeHead(200, {'Content-Type': 'application/json'});
@@ -131,3 +134,14 @@ function publicKeyUrl() {
   }
 }
 
+// Accrue
+function accrue(loyaltyIdentifier, check) {
+  // This is a simple point system: one dollar = one point
+  // So we only need the total check amount 
+  var accruedPoints = Math.floor(getPropOrErr(check, 'subtotal'));
+  if (accruedPoints <= 0) {
+    throw "ERROR_NO_ACCRUE";
+  } 
+  accounts.accrue(loyaltyIdentifier, accruedPoints);
+  return accruedPoints;
+}

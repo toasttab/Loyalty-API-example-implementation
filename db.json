@@ -6,7 +6,7 @@
       "last_name": "Smith",
       "email": "a1@gmail.com",
       "phone": "111-111-1111",
-      "points": "40",
+      "points": 40,
       "availableRewards": [
         {
           "id": "4",
@@ -21,7 +21,7 @@
       "last_name": "Johnson",
       "email": "a2@gmail.com",
       "phone": "111-111-1111",
-      "points": "0",
+      "points": 0,
       "availableRewards": [
         {
           "id": "2",
@@ -36,7 +36,7 @@
       "last_name": "Williams",
       "email": "a3@gmail.com",
       "phone": "111-111-1111",
-      "points": "80",
+      "points": 80,
       "availableRewards": [
         {
           "id": "1",
@@ -108,7 +108,7 @@
       "amount": 2,
       "redemptions": [
         {
-          "id":"2", 
+          "id": "2",
           "quantity": 1
         }
       ],
