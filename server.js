@@ -56,30 +56,56 @@ http.createServer((req, res) => {
       switch(transactionType) {
         case 'LOYALTY_INQUIRE':
             //info = getPropOrErr(body, 'inquireTransactionInformation');
-            identifier = getPropOrErr(body, 'loyaltyIdentifier');
+            identifier = getPropOrErr(body, 'identifier');
             var account = accounts.inquire(identifier);
             responseBody = {
               accounts: account
             };
-            transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+            //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_SEARCH':
-            //info = getPropOrErr(body, 'searchTransactionInformation');
             criteria = getPropOrErr(body, 'criteria');
             var results = accounts.search(criteria);
             responseBody = {
               accounts: results
             };
-            transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
+            //transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_VALIDATE':
+            identifier = getPropOrErr(body, 'identifier');
+            check = getPropOrErr(body, 'check');
+            redemptions = getPropOrErr(body, 'redemptions');
+            var rejectedRedemptions = accounts.validate(identifier, redemptions, false);
+            //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+            if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
+              return successResponse(res, responseBody);
+            } else {
+              responseBody = {
+                rejectedRedemptions: rejectedRedemptions
+              };
+              return rejectResponse(res, responseBody);
+            }
           case 'LOYALTY_REDEEM':
+            identifier = getPropOrErr(body, 'identifier');
+            check = getPropOrErr(body, 'check');
+            redemptions = getPropOrErr(body, 'redemptions');
+            var rejectedRedemptions = accounts.validate(identifier, redemptions, true);
+            if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
+              //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
+              return successResponse(res, responseBody);
+            } else {
+              //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+              responseBody = {
+                rejectedRedemptions: rejectedRedemptions
+              };
+              return rejectResponse(res, responseBody);
+            }
           case 'LOYALTY_ACCRUE':
-            identifier = getPropOrErr(body, 'loyaltyIdentifier');
+            identifier = getPropOrErr(body, 'identifier');
             check = getPropOrErr(body, 'check');
             redemptions = getPropOrErr(body, 'redemptions');
             var accruedPoints = accrue(identifier, check);
-            transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
+            //transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_REVERSE':
         default:
@@ -97,6 +123,15 @@ console.log('Server is up and listening at localhost:' + port);
 function successResponse(res, responseBody) {
   if (!responseBody) responseBody = {};
   responseBody['transactionStatus'] = 'ACCEPT';
+  responseBody = JSON.stringify(responseBody);
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  console.log('Successful response: ' + responseBody)
+  res.end(responseBody);
+}
+
+function rejectResponse(res, responseBody) {
+  if (!responseBody) responseBody = {};
+  responseBody['transactionStatus'] = 'REJECT';
   responseBody = JSON.stringify(responseBody);
   res.writeHead(200, {'Content-Type': 'application/json'});
   console.log('Successful response: ' + responseBody)

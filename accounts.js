@@ -45,6 +45,57 @@ function accrue(identifier, points) {
   db.update(account);
 }
 
+function validate(identifier, redemptions, redeem) {
+  var account = findByNumber(identifier);
+  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  var availableRewards = account.availableRewards;
+
+  var availableRewards_id_quantity_map = {};
+  for (var i in availableRewards) {
+    availableRewards_id_quantity_map[availableRewards[i].id] = availableRewards[i].quantity;
+  }
+
+  var redemptions_id_quantity_map = {};
+  var rejectedRedemptions = [];
+  for (var i in redemptions) {
+    var id = redemptions[i].identifier;
+    if (availableRewards_id_quantity_map[id]) {
+      var availableQuantity = availableRewards_id_quantity_map[id];
+      if (redemptions_id_quantity_map[id]) {
+        if (redemptions_id_quantity_map[id] >= availableQuantity) {
+          rejectedRedemptions.push(redemptions[i]);
+        } else {
+          redemptions_id_quantity_map[id]++;
+        }
+      } else {
+        if (availableQuantity > 0) {
+          redemptions_id_quantity_map[id] = 1;
+        } else {
+          rejectedRedemptions.push(redemptions[i]);
+        }
+      }
+    } else {
+      rejectedRedemptions.push(redemptions[i]);
+    }
+  }
+
+  if (redeem && (rejectedRedemptions === undefined || rejectedRedemptions.length == 0)) {
+    var i = availableRewards.length;
+    while (i--) {
+      var id = availableRewards[i].id;
+      if (redemptions_id_quantity_map[id]) {
+        availableRewards[i].quantity = availableRewards[i].quantity - redemptions_id_quantity_map[id];
+        if (availableRewards[i].quantity == 0) {
+          availableRewards.splice(i, 1);
+        }
+      }
+    }
+    db.update(account);
+  }
+
+  return rejectedRedemptions;
+}
+
 function findByNumber(value) {
   return db.find('loyalty_accounts', {number: value});
 }
@@ -93,4 +144,4 @@ function parseLoyaltyAccount(loyaltyAccount) {
   return account;
 }
 
-module.exports = {inquire, search, accrue};
+module.exports = {inquire, search, accrue, validate};
