@@ -98,6 +98,46 @@ function validateOrRedeem(identifier, redemptions, redeem) {
   return rejectedRedemptions;
 }
 
+function reverseRedeem(identifier, transaction) {
+  var account = findByNumber(identifier);
+  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  var availableRewards = account.availableRewards;
+  var redemptions = transaction.redemptions;
+
+  var redemptions_id_quantity_map = {};
+  for (var i in redemptions) {
+    var id = redemptions[i].identifier;
+    if (redemptions_id_quantity_map[id]) {
+      redemptions_id_quantity_map[id]++;
+    } else {
+      redemptions_id_quantity_map[id] = 1;
+    }
+  }
+
+  var i = availableRewards.length;
+  while (i--) {
+    var id = availableRewards[i].id;
+    if (redemptions_id_quantity_map[id]) {
+      availableRewards[i].quantity = availableRewards[i].quantity + redemptions_id_quantity_map[id];
+      delete redemptions_id_quantity_map[id];
+    }
+  }
+
+  for (var key in redemptions_id_quantity_map) {
+    if (redemptions_id_quantity_map.hasOwnProperty(key)) {
+      var redemption = {
+        id: key,
+        quantity: redemptions_id_quantity_map[key]
+      }
+      availableRewards.push(redemption);
+    }
+  }
+  db.update(account);
+
+  transaction.reversed = true;
+  db.update(transaction);
+}
+
 function findByNumber(value) {
   return db.find('loyalty_accounts', {number: value});
 }
@@ -146,4 +186,4 @@ function parseLoyaltyAccount(loyaltyAccount) {
   return account;
 }
 
-module.exports = {inquire, search, accrue, validateOrRedeem};
+module.exports = {inquire, search, accrue, validateOrRedeem, reverseRedeem};

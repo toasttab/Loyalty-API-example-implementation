@@ -78,11 +78,13 @@ http.createServer((req, res) => {
             check = getPropOrErr(body, 'check');
             redemptions = getPropOrErr(body, 'redemptions');
             var accruedPoints = accrue(identifier, check);
-            //transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
+            transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_REVERSE':
             identifier = getPropOrErr(body, 'identifier');
             var transactionId = getPropOrErr(body, 'transactionId');
+            reverse(identifier, transactionId);
+            return successResponse(res, responseBody)
         default:
           return errorResponse(res, 'ERROR_INVALID_TOAST_TRANSACTION_TYPE');
       }
@@ -164,7 +166,7 @@ function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, r
   var rejectedRedemptions = accounts.validateOrRedeem(identifier, redemptions, redeem);
 
   if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
-    //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
+    transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
     return successResponse(res, responseBody);
   } else {
     //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
@@ -178,6 +180,7 @@ function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, r
 // Reverse
 function reverse(loyaltyIdentifier, transactionId) {
   var transaction = transactions.find(transactionId);
+  if (transaction.reversed) throw "ERROR_TRANSACTION_ALREADY_BE_REVERSED";
   switch(transaction.method) {
     case 'LOYALTY_INQUIRE':
     case 'LOYALTY_SEARCH':
@@ -185,8 +188,24 @@ function reverse(loyaltyIdentifier, transactionId) {
     case 'LOYALTY_REVERSE':
       throw 'ERROR_TRANSACTION_CANNOT_BE_REVERSED';
     case 'LOYALTY_REDEEM':
-      //reverse
+      return reverseRedeem(loyaltyIdentifier, transaction);
     case 'LOYALTY_ACCRUE':
       throw "random";
+  }
+}
+
+function reverseRedeem(loyaltyIdentifier, transaction) {
+  if (transaction.redemptions) {
+    accounts.reverseRedeem(loyaltyIdentifier, transaction);
+  } else {
+    throw 'ERROR_TRANSACTION_CANNOT_BE_REVERSED';
+  }
+}
+
+function reverseAccrue(loyaltyIdentifier, transaction) {
+  if (transaction.amount) {
+
+  } else {
+    throw 'ERROR_TRANSACTION_CANNOT_BE_REVERSED';
   }
 }
