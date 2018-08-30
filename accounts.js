@@ -3,12 +3,14 @@ const rewards = require('./rewards')
 
 function inquire(identifier) {
   var account = findByNumber(identifier);
+  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   if(!account['active']) throw "ERROR_CARD_NOT_ACTIVATED";
   return parseLoyaltyAccount(account);
 }
 
 function search(criteria) {
   var accounts = find(criteria);
+  if (!accounts) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   var result = [];
   for (i in accounts) {
     var account = accounts[i];
@@ -45,7 +47,7 @@ function accrue(identifier, points) {
   db.update(account);
 }
 
-function validate(identifier, redemptions, redeem) {
+function validateOrRedeem(identifier, redemptions, redeem) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   var availableRewards = account.availableRewards;
@@ -144,4 +146,4 @@ function parseLoyaltyAccount(loyaltyAccount) {
   return account;
 }
 
-module.exports = {inquire, search, accrue, validate};
+module.exports = {inquire, search, accrue, validateOrRedeem};

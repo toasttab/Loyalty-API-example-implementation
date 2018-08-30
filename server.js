@@ -50,9 +50,7 @@ http.createServer((req, res) => {
     try {
       console.log('Request recieved: ' + body);
       body = JSON.parse(body) // converting body string to JSON
-      var info, identifier;
-      var check, redemptions;
-      var responseBody;
+      var info, identifier, check, redemptions, responseBody;
       switch(transactionType) {
         case 'LOYALTY_INQUIRE':
             //info = getPropOrErr(body, 'inquireTransactionInformation');
@@ -72,34 +70,9 @@ http.createServer((req, res) => {
             //transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_VALIDATE':
-            identifier = getPropOrErr(body, 'identifier');
-            check = getPropOrErr(body, 'check');
-            redemptions = getPropOrErr(body, 'redemptions');
-            var rejectedRedemptions = accounts.validate(identifier, redemptions, false);
-            //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
-            if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
-              return successResponse(res, responseBody);
-            } else {
-              responseBody = {
-                rejectedRedemptions: rejectedRedemptions
-              };
-              return rejectResponse(res, responseBody);
-            }
+            return validateOrRedeem(body, false, transactionType, transactionGuid, res, responseBody);
           case 'LOYALTY_REDEEM':
-            identifier = getPropOrErr(body, 'identifier');
-            check = getPropOrErr(body, 'check');
-            redemptions = getPropOrErr(body, 'redemptions');
-            var rejectedRedemptions = accounts.validate(identifier, redemptions, true);
-            if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
-              //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
-              return successResponse(res, responseBody);
-            } else {
-              //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
-              responseBody = {
-                rejectedRedemptions: rejectedRedemptions
-              };
-              return rejectResponse(res, responseBody);
-            }
+            return validateOrRedeem(body, true, transactionType, transactionGuid, res, responseBody);
           case 'LOYALTY_ACCRUE':
             identifier = getPropOrErr(body, 'identifier');
             check = getPropOrErr(body, 'check');
@@ -108,6 +81,8 @@ http.createServer((req, res) => {
             //transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_REVERSE':
+            identifier = getPropOrErr(body, 'identifier');
+            var transactionId = getPropOrErr(body, 'transactionId');
         default:
           return errorResponse(res, 'ERROR_INVALID_TOAST_TRANSACTION_TYPE');
       }
@@ -179,4 +154,39 @@ function accrue(loyaltyIdentifier, check) {
   } 
   accounts.accrue(loyaltyIdentifier, accruedPoints);
   return accruedPoints;
+}
+
+// Validate and redeem
+function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, responseBody) {
+  var identifier = getPropOrErr(body, 'identifier');
+  var check = getPropOrErr(body, 'check');
+  var redemptions = getPropOrErr(body, 'redemptions');
+  var rejectedRedemptions = accounts.validateOrRedeem(identifier, redemptions, redeem);
+
+  if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
+    //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
+    return successResponse(res, responseBody);
+  } else {
+    //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+    responseBody = {
+      rejectedRedemptions: rejectedRedemptions
+    };
+    return rejectResponse(res, responseBody);
+  }
+}
+
+// Reverse
+function reverse(loyaltyIdentifier, transactionId) {
+  var transaction = transactions.find(transactionId);
+  switch(transaction.method) {
+    case 'LOYALTY_INQUIRE':
+    case 'LOYALTY_SEARCH':
+    case 'LOYALTY_VALIDATE':
+    case 'LOYALTY_REVERSE':
+      throw 'ERROR_TRANSACTION_CANNOT_BE_REVERSED';
+    case 'LOYALTY_REDEEM':
+      //reverse
+    case 'LOYALTY_ACCRUE':
+      throw "random";
+  }
 }
