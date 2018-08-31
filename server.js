@@ -53,13 +53,12 @@ http.createServer((req, res) => {
       var info, identifier, check, redemptions, responseBody;
       switch(transactionType) {
         case 'LOYALTY_INQUIRE':
-            //info = getPropOrErr(body, 'inquireTransactionInformation');
             identifier = getPropOrErr(body, 'identifier');
             var account = accounts.inquire(identifier);
             responseBody = {
               accounts: account
             };
-            //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+            transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_SEARCH':
             criteria = getPropOrErr(body, 'criteria');
@@ -67,7 +66,7 @@ http.createServer((req, res) => {
             responseBody = {
               accounts: results
             };
-            //transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
+            transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
             return successResponse(res, responseBody);
           case 'LOYALTY_VALIDATE':
             return validateOrRedeem(body, false, transactionType, transactionGuid, res, responseBody);
@@ -169,7 +168,7 @@ function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, r
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
     return successResponse(res, responseBody);
   } else {
-    //transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
+    transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
     responseBody = {
       rejectedRedemptions: rejectedRedemptions
     };
@@ -190,7 +189,7 @@ function reverse(loyaltyIdentifier, transactionId) {
     case 'LOYALTY_REDEEM':
       return reverseRedeem(loyaltyIdentifier, transaction);
     case 'LOYALTY_ACCRUE':
-      throw "random";
+      return reverseAccrue(loyaltyIdentifier, transaction);
   }
 }
 
@@ -204,7 +203,7 @@ function reverseRedeem(loyaltyIdentifier, transaction) {
 
 function reverseAccrue(loyaltyIdentifier, transaction) {
   if (transaction.amount) {
-
+    accounts.reverseAccrue(loyaltyIdentifier, transaction);
   } else {
     throw 'ERROR_TRANSACTION_CANNOT_BE_REVERSED';
   }

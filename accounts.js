@@ -138,6 +138,42 @@ function reverseRedeem(identifier, transaction) {
   db.update(transaction);
 }
 
+function reverseAccrue(identifier, transaction) {
+  var account = findByNumber(identifier);
+  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+
+  var points = transaction.amount;
+  if (points < account.points) {
+    account.points = account.points - points;
+  } else {
+    var availableRewards = account.availableRewards;
+    var reward;
+    var rewardIndex;
+    for (var i in availableRewards) {
+      if (availableRewards[i].id == "2") {
+        reward = availableRewards[i];
+        rewardIndex = i;
+      }
+    }
+    if (!reward) throw "ERROR_UNABLE_TO_REVERSE";
+
+    var currentPoints = reward.quantity*50 + account.points;
+    var afterReversePoints = currentPoints - points;
+    if (Math.floor(afterReversePoints/50) > 0) {
+      var quantity = Math.floor(afterReversePoints/50);
+      reward.quantity = quantity;
+      afterReversePoints = afterReversePoints % 50;
+    } else {
+      account.availableRewards.splice(rewardIndex, 1);
+    }
+    account.points = afterReversePoints;
+  }
+
+  db.update(account);
+  transaction.reversed = true;
+  db.update(transaction);
+}
+
 function findByNumber(value) {
   return db.find('loyalty_accounts', {number: value});
 }
@@ -186,4 +222,4 @@ function parseLoyaltyAccount(loyaltyAccount) {
   return account;
 }
 
-module.exports = {inquire, search, accrue, validateOrRedeem, reverseRedeem};
+module.exports = {inquire, search, accrue, validateOrRedeem, reverseRedeem, reverseAccrue};
