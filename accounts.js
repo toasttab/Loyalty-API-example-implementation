@@ -5,7 +5,7 @@ function inquire(identifier) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   if(!account['active']) throw "ERROR_CARD_NOT_ACTIVATED";
-  return parseLoyaltyAccount(account);
+  return parseLoyaltyAccount(account, true);
 }
 
 function search(criteria) {
@@ -14,7 +14,7 @@ function search(criteria) {
   var result = [];
   for (i in accounts) {
     var account = accounts[i];
-    result.push(parseLoyaltyAccount(account));
+    result.push(parseLoyaltyAccount(account, false));
   }
   return result;
 }
@@ -208,18 +208,29 @@ function find(criteria) {
   }
 }
 
-function parseLoyaltyAccount(loyaltyAccount) {
-  var account = {};
-  account.identifier = loyaltyAccount.number;
-  var availableOffers = loyaltyAccount.availableRewards;
-  var offers = [];
-  for (var i in availableOffers) {
-    var offer = rewards.findById(availableOffers[i].id);
-    offer.quantity = availableOffers[i].quantity;
-    offers.push(offer);
+function parseLoyaltyAccount(loyaltyAccount, inquire) {
+  var accountInfo = {};
+  accountInfo.identifier = loyaltyAccount.number;
+  accountInfo.firstName = loyaltyAccount.first_name;
+  accountInfo.lastName = loyaltyAccount.last_name;
+  accountInfo.phone = loyaltyAccount.phone;
+  accountInfo.email = loyaltyAccount.email;
+
+  if (inquire) {
+    var account = {};
+    account.accountInfo = accountInfo;
+
+    var availableOffers = loyaltyAccount.availableRewards;
+    var offers = [];
+    for (var i in availableOffers) {
+      var offer = rewards.findById(availableOffers[i].id);
+      offer.quantity = availableOffers[i].quantity;
+      offers.push(offer);
+    }
+    account.offers = offers;
+    return account;
   }
-  account.offers = offers;
-  return account;
+  return accountInfo;
 }
 
 module.exports = {inquire, search, accrue, validateOrRedeem, reverseRedeem, reverseAccrue};
