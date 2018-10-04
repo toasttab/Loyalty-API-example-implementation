@@ -172,16 +172,25 @@ function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, r
   var identifier = getPropOrErr(info, 'loyaltyIdentifier');
   var check = getPropOrErr(info, 'check');
   var redemptions = getPropOrErr(info, 'redemptions');
-  var rejectedRedemptions = accounts.validateOrRedeem(identifier, redemptions, redeem);
+  var result = accounts.validateOrRedeem(identifier, redemptions, redeem);
 
-  if (rejectedRedemptions === undefined || rejectedRedemptions.length == 0) {
+  if (result["rejectedRedemptions"] === undefined || result["rejectedRedemptions"].length == 0) {
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
+    responseBody = {
+      checkResponse: {
+        rejectedRedemptions: result["rejectedRedemptions"],
+        appliedRedemptions: result["appliedRedemptions"],
+        userMessage: "this is a message in response check"
+      }
+    };
     return successResponse(res, responseBody);
   } else {
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
     responseBody = {
       checkResponse: {
-        rejectedRedemptions: rejectedRedemptions
+        rejectedRedemptions: result["rejectedRedemptions"],
+        appliedRedemptions: result["appliedRedemptions"],
+        userMessage: "this is a message in response check"
       }
     };
     return rejectResponse(res, responseBody);

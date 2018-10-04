@@ -59,6 +59,7 @@ function validateOrRedeem(identifier, redemptions, redeem) {
 
   var redemptions_id_quantity_map = {};
   var rejectedRedemptions = [];
+  var availableRedemptions = [];
   for (var i in redemptions) {
     var id = redemptions[i].identifier;
     if (availableRewards_id_quantity_map[id]) {
@@ -72,10 +73,12 @@ function validateOrRedeem(identifier, redemptions, redeem) {
           rejectedRedemptions.push(redemption);
         } else {
           redemptions_id_quantity_map[id]++;
+          availableRedemptions.push(redemptions[i]);
         }
       } else {
         if (availableQuantity > 0) {
           redemptions_id_quantity_map[id] = 1;
+          availableRedemptions.push(redemptions[i]);
         } else {
           var redemption = {
             "redemption": redemptions[i], 
@@ -107,7 +110,12 @@ function validateOrRedeem(identifier, redemptions, redeem) {
     db.update(account);
   }
 
-  return rejectedRedemptions;
+  var result = {
+    rejectedRedemptions: rejectedRedemptions,
+    appliedRedemptions: availableRedemptions
+  }
+
+  return result;
 }
 
 function reverseRedeem(identifier, transaction) {
