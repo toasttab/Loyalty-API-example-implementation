@@ -2,10 +2,10 @@
   "loyalty_accounts": [
     {
       "number": "1",
-      "first_name": "James",
-      "last_name": "Smith",
+      "first_name": "james",
+      "last_name": "smith",
       "email": "a1@gmail.com",
-      "phone": "111-111-1111",
+      "phone": "1111111111",
       "points": 40,
       "availableRewards": [
         {
@@ -17,10 +17,10 @@
     },
     {
       "number": "2",
-      "first_name": "John",
-      "last_name": "Johnson",
+      "first_name": "john",
+      "last_name": "johnson",
       "email": "a2@gmail.com",
-      "phone": "111-111-1111",
+      "phone": "1111111112",
       "points": 0,
       "availableRewards": [
         {
@@ -32,10 +32,10 @@
     },
     {
       "number": "3",
-      "first_name": "Jack",
-      "last_name": "Williams",
+      "first_name": "jack",
+      "last_name": "williams",
       "email": "a3@gmail.com",
-      "phone": "111-111-1111",
+      "phone": "1111111113",
       "points": 80,
       "availableRewards": [
         {
@@ -56,7 +56,7 @@
       "name": "reward 1",
       "description": "this is a check level percentage reward",
       "scope": "CHECK",
-      "type": "PERCENTAGE",
+      "type": "PERCENT",
       "item_id": "",
       "amount": "5"
     },
@@ -65,7 +65,7 @@
       "name": "reward 2",
       "description": "check level dollar reward",
       "scope": "CHECK",
-      "type": "CURRENCY",
+      "type": "FIXED",
       "item_id": "",
       "amount": "5"
     },
@@ -74,7 +74,7 @@
       "name": "reward 3",
       "description": "item level percentage",
       "scope": "ITEM",
-      "type": "PERCENTAGE",
+      "type": "PERCENT",
       "item_id": "1",
       "amount": "10"
     },
@@ -83,7 +83,7 @@
       "name": "reward 3",
       "description": "item level dollar",
       "scope": "ITEM",
-      "type": "CURRENCY",
+      "type": "FIXED",
       "item_id": "2",
       "amount": "10"
     }

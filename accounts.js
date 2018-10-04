@@ -65,7 +65,11 @@ function validateOrRedeem(identifier, redemptions, redeem) {
       var availableQuantity = availableRewards_id_quantity_map[id];
       if (redemptions_id_quantity_map[id]) {
         if (redemptions_id_quantity_map[id] >= availableQuantity) {
-          rejectedRedemptions.push(redemptions[i]);
+          var redemption = {
+            "redemption": redemptions[i], 
+            "message": "more than available quantity"
+          }
+          rejectedRedemptions.push(redemption);
         } else {
           redemptions_id_quantity_map[id]++;
         }
@@ -73,11 +77,19 @@ function validateOrRedeem(identifier, redemptions, redeem) {
         if (availableQuantity > 0) {
           redemptions_id_quantity_map[id] = 1;
         } else {
-          rejectedRedemptions.push(redemptions[i]);
+          var redemption = {
+            "redemption": redemptions[i], 
+            "message": "not available"
+          }
+          rejectedRedemptions.push(redemptions);
         }
       }
     } else {
-      rejectedRedemptions.push(redemptions[i]);
+      var redemption = {
+        "redemption": redemptions[i], 
+        "message": "this is not an available reward"
+      }
+      rejectedRedemptions.push(redemption);
     }
   }
 

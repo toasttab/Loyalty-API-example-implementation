@@ -10,7 +10,7 @@ function parseRewardToOffer(reward) {
   var offer = {};
   offer.identifier = reward.id;
   offer.name = reward.name;
-  offer.scope = reward.scope;
+  offer.selectionType = reward.scope;
   offer.type = reward.type;
   offer.amount = reward.amount;
   return offer;
