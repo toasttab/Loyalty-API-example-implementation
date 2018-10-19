@@ -52,18 +52,6 @@ http.createServer((req, res) => {
       body = JSON.parse(body) // converting body string to JSON
       var info, identifier, check, redemptions, responseBody;
       switch(transactionType) {
-        case 'LOYALTY_INQUIRE':
-          info = getPropOrErr(body, 'inquireTransactionInformation');
-          identifier = getPropOrErr(info, 'loyaltyIdentifier');
-          var account = accounts.inquire(identifier);
-          responseBody = {
-            inquireResponse: {
-              accountInfo: account.accountInfo,
-              offers: account.offers
-            }
-          };
-          transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
-          return successResponse(res, responseBody);
         case 'LOYALTY_SEARCH':
           info = getPropOrErr(body, 'searchTransactionInformation');
           criteria = getPropOrErr(info, 'searchCriteria');
@@ -75,18 +63,10 @@ http.createServer((req, res) => {
           };
           transactions.create(transactionType, transactionGuid, undefined, criteria, undefined, undefined);
           return successResponse(res, responseBody);
-        case 'LOYALTY_VALIDATE':
-          return validateOrRedeem(body, false, transactionType, transactionGuid, res, responseBody);
+        case 'LOYALTY_INQUIRE':
         case 'LOYALTY_REDEEM':
-          return validateOrRedeem(body, true, transactionType, transactionGuid, res, responseBody);
         case 'LOYALTY_ACCRUE':
-          var info = getPropOrErr(body, 'checkTransactionInformation');
-          identifier = getPropOrErr(info, 'loyaltyIdentifier');
-          check = getPropOrErr(info, 'check');
-          redemptions = getPropOrErr(info, 'redemptions');
-          var accruedPoints = accrue(identifier, check);
-          transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
-          return successResponse(res, responseBody);
+          return parseCheckTransactionInformation(body, transactionType, transactionGuid, res, responseBody)
         case 'LOYALTY_REVERSE':
           var info = getPropOrErr(body, 'reverseTransactionInformation');
           identifier = getPropOrErr(info, 'loyaltyIdentifier');
@@ -166,32 +146,30 @@ function accrue(loyaltyIdentifier, check) {
   return accruedPoints;
 }
 
-// Validate and redeem
-function validateOrRedeem(body, redeem, transactionType, transactionGuid, res, responseBody) {
+function parseCheckTransactionInformation(body, transactionType, transactionGuid, res, responseBody) {
   var info = getPropOrErr(body, 'checkTransactionInformation');
   var identifier = getPropOrErr(info, 'loyaltyIdentifier');
   var check = getPropOrErr(info, 'check');
   var redemptions = getPropOrErr(info, 'redemptions');
-  var result = accounts.validateOrRedeem(identifier, redemptions, redeem);
+
+  if (transactionType == 'LOYALTY_ACCRUE') {
+    var accruedPoints = accrue(identifier, check);
+    transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
+    return successResponse(res, responseBody);
+  } 
+
+  var result = accounts.inquireOrRedeem(identifier, redemptions, transactionType);
 
   if (result["rejectedRedemptions"] === undefined || result["rejectedRedemptions"].length == 0) {
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
     responseBody = {
-      checkResponse: {
-        rejectedRedemptions: result["rejectedRedemptions"],
-        appliedRedemptions: result["appliedRedemptions"],
-        userMessage: "this is a message in response check"
-      }
+      checkResponse: result
     };
     return successResponse(res, responseBody);
   } else {
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, undefined);
     responseBody = {
-      checkResponse: {
-        rejectedRedemptions: result["rejectedRedemptions"],
-        appliedRedemptions: result["appliedRedemptions"],
-        userMessage: "this is a message in response check"
-      }
+      checkResponse: result
     };
     return rejectResponse(res, responseBody);
   }
