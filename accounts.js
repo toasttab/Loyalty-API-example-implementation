@@ -148,7 +148,7 @@ function toAccountInfo(loyaltyAccount) {
   return accountInfo;
 }
 
-function inquireOrRedeem(identifier, redemptions, transactionType) {
+function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   // get the account information and all available offers
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
@@ -159,9 +159,29 @@ function inquireOrRedeem(identifier, redemptions, transactionType) {
   var rejectedRedemptions = [];
   var availableRedemptions = [];
 
+  // Get all the available item in the check
+  check_item_quantity_map = {};
+  if (check.selections != null) { 
+    for (var i in check.selections) {
+      var selection = check.selections[i];
+      if (check_item_quantity_map[selection.guid]) {
+        check_item_quantity_map[selection.guid]++;
+      } else {
+        check_item_quantity_map[selection.guid] = 1;
+      }
+      for (var j in check.modifiers) {
+        var modifier = check.modifier[j];
+        if (check_item_quantity_map[modifier.guid]) {
+          check_item_quantity_map[modifier.guid]++;
+        } else {
+          check_item_quantity_map[modifier.guid] = 1;
+        }
+      }
+    }
+  }
+
   // offer id and its quantity for all available offers in this account
   var availableRewards_id_quantity_map = {};
-
   for (var i in availableRewards) {
     availableRewards_id_quantity_map[availableRewards[i].id] = availableRewards[i].quantity;
   }
@@ -206,8 +226,11 @@ function inquireOrRedeem(identifier, redemptions, transactionType) {
   // calculate the available offer list
   for (var i in availableRewards) {
     var id = availableRewards[i].id;
-    var currentQuantity = availableRewards_id_quantity_map[id] - redemptions_id_quantity_map[id];
-    offers.push(rewards.getOffer(id, currentQuantity));
+    var currentQuantity = availableRewards_id_quantity_map[id];
+    if (redemptions_id_quantity_map[id]) {
+      currentQuantity = availableRewards_id_quantity_map[id] - redemptions_id_quantity_map[id];
+    } 
+    offers.push(rewards.getOffer(id, currentQuantity, check_item_quantity_map, redemptions_id_quantity_map));
   }
 
   if (transactionType == "LOYALTY_REDEEM" && (rejectedRedemptions === undefined || rejectedRedemptions.length == 0)) {

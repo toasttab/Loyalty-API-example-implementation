@@ -137,7 +137,6 @@ function publicKeyUrl() {
 // Accrue
 function accrue(loyaltyIdentifier, check) {
   // This is a simple point system: one dollar = one point
-  // So we only need the total check amount 
   var accruedPoints = Math.floor(getPropOrErr(check, 'subtotal'));
   if (accruedPoints <= 0) {
     throw "ERROR_NO_ACCRUE";
@@ -158,7 +157,7 @@ function parseCheckTransactionInformation(body, transactionType, transactionGuid
     return successResponse(res, responseBody);
   } 
 
-  var result = accounts.inquireOrRedeem(identifier, redemptions, transactionType);
+  var result = accounts.inquireOrRedeem(identifier, check, redemptions, transactionType);
 
   if (result["rejectedRedemptions"] === undefined || result["rejectedRedemptions"].length == 0) {
     transactions.create(transactionType, transactionGuid, identifier, undefined, undefined, redemptions);
