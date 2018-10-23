@@ -1,13 +1,13 @@
 const db = require('./db')
 
-function getOffer(value, quantity, check_item_quantity_map, redemptions_id_quantity_map) {
+function getOffer(value, quantity, check_item_guid_map, redemptions_id_quantity_map) {
   var reward = db.find('rewards', {id: value});
   if (reward == null) throw "ERROR_REWARD_DOES_NOT_EXIST";
-  return toOffer(reward, quantity, check_item_quantity_map, redemptions_id_quantity_map);
+  return toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_map);
 }
 
-function toOffer(reward, quantity, check_item_quantity_map, redemptions_id_quantity_map) {
-  var check = checkApplicable(reward, quantity, check_item_quantity_map, redemptions_id_quantity_map);
+function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_map) {
+  var check = checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_quantity_map);
   var offer = {};
   offer.identifier = reward.id;
   offer.name = reward.name;
@@ -29,8 +29,8 @@ function toOffer(reward, quantity, check_item_quantity_map, redemptions_id_quant
 //    1. reward available
 //    2. each reward can only be used once per check
 //    3. the item is available in the check
-//    4. the reward is always apply to the first item available in the check
-function checkApplicable(reward, quantity, check_item_quantity_map, redemptions_id_quantity_map) {
+//    4. the reward is always apply to the first item available in the list and the check
+function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_quantity_map) {
   var result = {}
   var itemsApplied = reward.item_id;
 
@@ -38,12 +38,11 @@ function checkApplicable(reward, quantity, check_item_quantity_map, redemptions_
     result.applicable = false;
     return result;
   }
-
   for (var i in itemsApplied) {
    var id = itemsApplied[i];
-   if (check_item_quantity_map[id]) {
+   if (check_item_guid_map[id]) {
     result.applicable = true;
-    result.item_id = id;
+    result.item_id = check_item_guid_map[id][0];
     return result;
    } 
   }

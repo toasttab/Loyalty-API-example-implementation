@@ -160,21 +160,21 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   var availableRedemptions = [];
 
   // Get all the available item in the check
-  check_item_quantity_map = {};
+  check_item_guid_map = {};
   if (check.selections != null) { 
     for (var i in check.selections) {
       var selection = check.selections[i];
-      if (check_item_quantity_map[selection.guid]) {
-        check_item_quantity_map[selection.guid]++;
+      if (check_item_guid_map[selection.guid]) {
+        check_item_guid_map[modifier.item.guid].push(selection.guid);
       } else {
-        check_item_quantity_map[selection.guid] = 1;
+        check_item_guid_map[selection.item.guid] = [selection.guid];
       }
       for (var j in check.modifiers) {
         var modifier = check.modifier[j];
-        if (check_item_quantity_map[modifier.guid]) {
-          check_item_quantity_map[modifier.guid]++;
+        if (check_item_guid_map[modifier.item.guid]) {
+          check_item_guid_map[modifier.item.guid].push(selection.guid);
         } else {
-          check_item_quantity_map[modifier.guid] = 1;
+          check_item_guid_map[modifier.item.guid] = [selection.guid];
         }
       }
     }
@@ -230,7 +230,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     if (redemptions_id_quantity_map[id]) {
       currentQuantity = availableRewards_id_quantity_map[id] - redemptions_id_quantity_map[id];
     } 
-    offers.push(rewards.getOffer(id, currentQuantity, check_item_quantity_map, redemptions_id_quantity_map));
+    offers.push(rewards.getOffer(id, currentQuantity, check_item_guid_map, redemptions_id_quantity_map));
   }
 
   if (transactionType == "LOYALTY_REDEEM" && (rejectedRedemptions === undefined || rejectedRedemptions.length == 0)) {
