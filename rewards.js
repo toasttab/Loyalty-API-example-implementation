@@ -48,6 +48,11 @@ function checkApplicable(reward, quantity, check_item_quantity_map, redemptions_
    } 
   }
 
+  if (itemsApplied.length == 0) {
+    result.applicable = true;
+    return result;
+  }
+
   result.applicable = false;
   return result;
 }
