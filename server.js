@@ -18,7 +18,7 @@ https.get(publicKeyUrl(), (res) => {
   });
 });
 
-var port = 18181;
+var port = 8181;
 
 // In a real implementation, HTTPS must be used
 http.createServer((req, res) => {
@@ -140,7 +140,7 @@ function accrue(loyaltyIdentifier, check) {
   var accruedPoints = Math.floor(getPropOrErr(check, 'subtotal'));
   if (accruedPoints <= 0) {
     throw "ERROR_NO_ACCRUE";
-  } 
+  }
   accounts.accrue(loyaltyIdentifier, accruedPoints);
   return accruedPoints;
 }
@@ -155,7 +155,7 @@ function parseCheckTransactionInformation(body, transactionType, transactionGuid
     var accruedPoints = accrue(identifier, check);
     transactions.create(transactionType, transactionGuid, identifier, undefined, accruedPoints, undefined);
     return successResponse(res, responseBody);
-  } 
+  }
 
   var result = accounts.inquireOrRedeem(identifier, check, redemptions, transactionType);
 
