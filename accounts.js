@@ -12,7 +12,7 @@ function search(criteria) {
   return result;
 }
 
-function accrue(identifier, amount) {
+function accrue(identifier, points) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   var newPoints = account.points + points;
