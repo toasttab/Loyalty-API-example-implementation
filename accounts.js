@@ -12,7 +12,7 @@ function search(criteria) {
   return result;
 }
 
-function accrue(identifier, points) {
+function accrue(identifier, amount) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
   var newPoints = account.points + points;
@@ -164,17 +164,20 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   if (check.selections != null) { 
     for (var i in check.selections) {
       var selection = check.selections[i];
-      if (check_item_guid_map[selection.guid]) {
-        check_item_guid_map[modifier.item.guid].push(selection.guid);
-      } else {
-        check_item_guid_map[selection.item.guid] = [selection.guid];
-      }
-      for (var j in check.modifiers) {
-        var modifier = check.modifier[j];
-        if (check_item_guid_map[modifier.item.guid]) {
-          check_item_guid_map[modifier.item.guid].push(selection.guid);
+      // Can't apply discounts to items with discounts
+      if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
+        if (check_item_guid_map[selection.guid]) {
+          check_item_guid_map[selection.item.guid].push(selection.guid);
         } else {
-          check_item_guid_map[modifier.item.guid] = [selection.guid];
+          check_item_guid_map[selection.item.guid] = [selection.guid];
+        }
+        for (var j in selection.modifiers) {
+          var modifier = selection.modifier[j];
+          if (check_item_guid_map[modifier.item.guid]) {
+            check_item_guid_map[modifier.item.guid].push(selection.guid);
+          } else {
+            check_item_guid_map[modifier.item.guid] = [selection.guid];
+          }
         }
       }
     }
@@ -190,28 +193,37 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   for (var i in redemptions) {
     var id = redemptions[i].identifier;
     if (availableRewards_id_quantity_map[id]) {
+      var reward = db.find('rewards', {id: id});
       var availableQuantity = availableRewards_id_quantity_map[id];
-      if (redemptions_id_quantity_map[id]) {
-        if (redemptions_id_quantity_map[id] >= availableQuantity) {
-          var redemption = {
-            "redemption": redemptions[i], 
-            "message": "more than available quantity"
-          }
-          rejectedRedemptions.push(redemption);
-        } else {
-          redemptions_id_quantity_map[id]++;
-          availableRedemptions.push(redemptions[i]);
+      if (reward.type == "BOGO" && check_item_guid_map[reward.prereq] == null) {
+        var redemption = {
+          "redemption": redemptions[i], 
+          "message": "Requisite item not on check"
         }
+        rejectedRedemptions.push(redemption);          
       } else {
-        if (availableQuantity > 0) {
-          redemptions_id_quantity_map[id] = 1;
-          availableRedemptions.push(redemptions[i]);
-        } else {
-          var redemption = {
-            "redemption": redemptions[i], 
-            "message": "not available"
+        if (redemptions_id_quantity_map[id]) {
+          if (redemptions_id_quantity_map[id] >= availableQuantity) {
+            var redemption = {
+              "redemption": redemptions[i], 
+              "message": "more than available quantity"
+            }
+            rejectedRedemptions.push(redemption);
+          } else {
+            redemptions_id_quantity_map[id]++;
+            availableRedemptions.push(redemptions[i]);
           }
-          rejectedRedemptions.push(redemptions);
+        } else {
+          if (availableQuantity > 0) {
+            redemptions_id_quantity_map[id] = 1;
+            availableRedemptions.push(redemptions[i]);
+          } else {
+            var redemption = {
+              "redemption": redemptions[i], 
+              "message": "not available"
+            }
+            rejectedRedemptions.push(redemptions);
+          }
         }
       }
     } else {
@@ -228,7 +240,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     var id = availableRewards[i].id;
     var currentQuantity = availableRewards_id_quantity_map[id];
     if (redemptions_id_quantity_map[id]) {
-      currentQuantity = availableRewards_id_quantity_map[id] - redemptions_id_quantity_map[id];
+      currentQuantity = currentQuantity - redemptions_id_quantity_map[id];
     } 
     offers.push(rewards.getOffer(id, currentQuantity, check_item_guid_map, redemptions_id_quantity_map));
   }

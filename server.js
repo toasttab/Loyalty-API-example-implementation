@@ -18,7 +18,7 @@ https.get(publicKeyUrl(), (res) => {
   });
 });
 
-var port = 8181;
+var port = 18182;
 
 // In a real implementation, HTTPS must be used
 http.createServer((req, res) => {
@@ -94,15 +94,6 @@ function successResponse(res, responseBody) {
   res.end(responseBody);
 }
 
-function rejectResponse(res, responseBody) {
-  if (!responseBody) responseBody = {};
-  responseBody['transactionStatus'] = 'REJECT';
-  responseBody = JSON.stringify(responseBody);
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  console.log('Successful response: ' + responseBody)
-  res.end(responseBody);
-}
-
 function errorResponse(res, transactionStatus) {
   res.writeHead(400, {'Content-Type': 'application/json'});
   console.log('Error response: ' + transactionStatus);
@@ -170,7 +161,7 @@ function parseCheckTransactionInformation(body, transactionType, transactionGuid
     responseBody = {
       checkResponse: result
     };
-    return rejectResponse(res, responseBody);
+    return successResponse(res, responseBody);
   }
 }
 

@@ -14,11 +14,7 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   offer.applicable = check.applicable;
   offer.selectionType = reward.scope;
   offer.type = reward.type;
-  if (offer.type == "PERCENT") {
-    offer.percentage = reward.amount;
-  } else {
-    offer.amount = reward.amount;
-  }
+  offer.amount = reward.amount;
   offer.selectionIdentifier = check.item_id;
   offer.quantity = quantity > 0 ? quantity : 0;
 
@@ -34,22 +30,25 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
   var result = {}
   var itemsApplied = reward.item_id;
 
-  if (quantity <= 0 || redemptions_id_quantity_map[reward.id]) {
+  if (quantity <= 0) {
     result.applicable = false;
     return result;
-  }
-  for (var i in itemsApplied) {
-   var id = itemsApplied[i];
-   if (check_item_guid_map[id]) {
-    result.applicable = true;
-    result.item_id = check_item_guid_map[id][0];
-    return result;
-   } 
   }
 
   if (itemsApplied.length == 0) {
     result.applicable = true;
     return result;
+  }
+
+  if (reward.type == null || reward.type != "BOGO" || check_item_guid_map[reward.prereq] != null) {
+    for (var i in itemsApplied) {
+      var id = itemsApplied[i];
+      if (check_item_guid_map[id]) {
+        result.applicable = true;
+        result.item_id = check_item_guid_map[id][0];
+        return result;
+      }
+    }
   }
 
   result.applicable = false;
