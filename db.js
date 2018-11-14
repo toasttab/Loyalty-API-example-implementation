@@ -21,4 +21,8 @@ function findByKey(table, key, value){
 	return db.get(table).filter(function(o) {return o[key].includes(value)}).value();
 }
 
-module.exports = { push, update, find, findByKey }
+function getAll(table){
+  return db.get(table).value();
+}
+
+module.exports = { push, update, find, findByKey, getAll }
