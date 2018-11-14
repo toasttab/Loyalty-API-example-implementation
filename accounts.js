@@ -134,7 +134,7 @@ function find(criteria) {
   } else if (criteria["phone"]) {
     return findByKey('phone', criteria["phone"].toLowerCase());
   } else {
-    throw "ERROR_INVALID_CRITERIA";
+    throw "ERROR_INVALID_INPUT_PROPERTIES";
   }
 }
 
