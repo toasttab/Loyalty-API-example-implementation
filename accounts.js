@@ -172,7 +172,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
           check_item_guid_map[selection.item.guid] = [selection.guid];
         }
         for (var j in selection.modifiers) {
-          var modifier = selection.modifier[j];
+          var modifier = selection.modifiers[j];
           if (check_item_guid_map[modifier.item.guid]) {
             check_item_guid_map[modifier.item.guid].push(selection.guid);
           } else {
