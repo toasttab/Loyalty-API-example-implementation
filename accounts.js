@@ -3,7 +3,7 @@ const rewards = require('./rewards')
 
 function search(criteria) {
   var accounts = find(criteria);
-  if (!accounts) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  if (!accounts) throw "ERROR_ACCOUNT_INVALID";
   var result = [];
   for (i in accounts) {
     var account = accounts[i];
@@ -14,7 +14,7 @@ function search(criteria) {
 
 function accrue(identifier, points) {
   var account = findByNumber(identifier);
-  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  if (!account) throw "ERROR_ACCOUNT_INVALID";
   var newPoints = account.points + points;
   if (Math.floor(newPoints/50) > 0) {
     var quantity = Math.floor(newPoints/50);
@@ -42,7 +42,7 @@ function accrue(identifier, points) {
 
 function reverseRedeem(identifier, transaction) {
   var account = findByNumber(identifier);
-  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  if (!account) throw "ERROR_ACCOUNT_INVALID";
   var availableRewards = account.availableRewards;
   var redemptions = transaction.redemptions;
 
@@ -82,7 +82,7 @@ function reverseRedeem(identifier, transaction) {
 
 function reverseAccrue(identifier, transaction) {
   var account = findByNumber(identifier);
-  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  if (!account) throw "ERROR_ACCOUNT_INVALID";
 
   var points = transaction.amount;
   if (points < account.points) {
@@ -151,7 +151,7 @@ function toAccountInfo(loyaltyAccount) {
 function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   // get the account information and all available offers
   var account = findByNumber(identifier);
-  if (!account) throw "ERROR_ACCOUNT_DOES_NOT_EXIST";
+  if (!account) throw "ERROR_ACCOUNT_INVALID";
   if(!account['active']) throw "ERROR_CARD_NOT_ACTIVATED";
   var availableRewards = account.availableRewards;
 
