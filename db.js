@@ -18,7 +18,7 @@ function find(table, object){
 }
 
 function findByKey(table, key, value){
-	return db.get(table).filter(function(o) {return o[key].includes(value)}).value();
+	return db.get(table).filter(function(o) {return o[key].toLowerCase().includes(value)}).value();
 }
 
 function getAll(table){
