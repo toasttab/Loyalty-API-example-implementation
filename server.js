@@ -68,8 +68,9 @@ http
     });
     req.on("end", () => {
       try {
-        console.log("Request recieved: " + body);
+        console.log("Request recieved:");
         body = JSON.parse(body); // converting body string to JSON
+        console.log(body);
         var info, identifier, check, redemptions, responseBody;
         switch (transactionType) {
           case "LOYALTY_SEARCH":
@@ -122,9 +123,10 @@ console.log("Server is up and listening at localhost:" + port);
 function successResponse(res, responseBody) {
   if (!responseBody) responseBody = {};
   responseBody["transactionStatus"] = "ACCEPT";
-  responseBody = JSON.stringify(responseBody);
   res.writeHead(200, { "Content-Type": "application/json" });
-  console.log("Successful response: " + responseBody);
+  console.log("Successful response: ");
+  console.log(responseBody);
+  responseBody = JSON.stringify(responseBody);
   res.end(responseBody);
 }
 
