@@ -1,6 +1,7 @@
 const http = require("http");
 const https = require("https");
 const jwt = require("jsonwebtoken");
+const util = require("util");
 
 const accounts = require("./accounts");
 const transactions = require("./transactions");
@@ -70,7 +71,7 @@ http
       try {
         console.log("Request recieved:");
         body = JSON.parse(body); // converting body string to JSON
-        console.log(body);
+        console.log(util.inspect(body, false, null, true));
         var info, identifier, check, redemptions, responseBody;
         switch (transactionType) {
           case "LOYALTY_SEARCH":
@@ -125,7 +126,7 @@ function successResponse(res, responseBody) {
   responseBody["transactionStatus"] = "ACCEPT";
   res.writeHead(200, { "Content-Type": "application/json" });
   console.log("Successful response: ");
-  console.log(responseBody);
+  console.log(util.inspect(responseBody, false, null, true));
   responseBody = JSON.stringify(responseBody);
   res.end(responseBody);
 }
