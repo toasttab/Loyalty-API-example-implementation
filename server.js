@@ -167,7 +167,7 @@ function getPublicKeyUrl() {
 // Accrue
 function accrue(loyaltyIdentifier, check) {
   // This is a simple point system: one dollar = one point
-  var accruedPoints = Math.floor(getPropOrErr(check, "subtotal"));
+  var accruedPoints = Math.floor(getPropOrErr(check, "totalAmount"));
   if (accruedPoints <= 0) {
     throw "ERROR_NO_ACCRUE";
   }
