@@ -15,7 +15,13 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   offer.selectionType = reward.scope;
   offer.type = reward.type;
   offer.amount = reward.amount;
-  offer.selectionIdentifier = check.item_id;
+  if (offer.selectionType == "ITEM") {
+    var itemInfo = {};
+    itemInfo.selectionIdentifier = check.item_id;
+    itemInfo.amount = reward.amount;
+    offer.itemApplication = [];
+    offer.itemApplication.push(itemInfo);
+  }
   offer.quantity = quantity > 0 ? quantity : 0;
 
   return offer;
