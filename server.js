@@ -171,6 +171,9 @@ function accrue(loyaltyIdentifier, check) {
   if (accruedPoints <= 0) {
     throw "ERROR_NO_ACCRUE";
   }
+  if (loyaltyIdentifier == null) {
+    return 0;
+  }
   accounts.accrue(loyaltyIdentifier, accruedPoints);
   return accruedPoints;
 }
@@ -183,11 +186,11 @@ function parseCheckTransactionInformation(
   responseBody
 ) {
   var info = getPropOrErr(body, "checkTransactionInformation");
-  var identifier = getPropOrErr(info, "loyaltyIdentifier");
   var check = getPropOrErr(info, "check");
   var redemptions = getPropOrErr(info, "redemptions");
 
   if (transactionType == "LOYALTY_ACCRUE") {
+    var identifier = info["loyaltyIdentifier"];
     var accruedPoints = accrue(identifier, check);
     transactions.create(
       transactionType,
@@ -197,9 +200,15 @@ function parseCheckTransactionInformation(
       accruedPoints,
       undefined
     );
+    responseBody = {
+      checkResponse: {
+        userMessage: "points accrued: " + accruedPoints
+      }
+    };
     return successResponse(res, responseBody);
   }
 
+  var identifier = getPropOrErr(info, "loyaltyIdentifier");
   var result = accounts.inquireOrRedeem(
     identifier,
     check,
