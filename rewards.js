@@ -15,6 +15,14 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   offer.selectionType = reward.scope;
   offer.type = reward.type;
   offer.amount = reward.amount;
+  offer.expiration = [];
+  if (reward.expiryDate != null) {
+    expirationDate = {
+      date: reward.expiryDate,
+      quantity: quantity
+    }
+    offer.expiration.push(expirationDate);
+  }
   if (offer.selectionType == "ITEM") {
     var itemInfo = {};
     itemInfo.selectionIdentifier = check.item_id;

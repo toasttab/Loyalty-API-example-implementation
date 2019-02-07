@@ -15,6 +15,10 @@
         {
           "id": "4",
           "quantity": 10
+        },
+        {
+          "id": "5",
+          "quantity": 1
         }
       ],
       "active": true
@@ -92,6 +96,15 @@
         "5abf524e-31b5-4c1b-a797-7a44d888d071"
       ],
       "amount": "5"
+    },
+    {
+      "id": "5",
+      "name": "limited time offer",
+      "description": "check level dollar limited time",
+      "scope": "CHECK",
+      "item_id": [],
+      "amount": "5",
+      "expiryDate": "2029-09-09T20:44:29.439+0000"
     }
   ],
   "transactions": [
