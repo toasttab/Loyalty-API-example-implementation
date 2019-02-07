@@ -160,7 +160,7 @@ function getPublicKeyUrl() {
   if (process.argv[2] != null) {
     return process.argv[2];
   } else {
-    return "https://ws-sandbox-api.eng.toasttab.com/usermgmt/v1/oauth/token_key";
+    throw "public key URL must be supplied!";
   }
 }
 
