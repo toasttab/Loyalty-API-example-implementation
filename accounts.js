@@ -145,6 +145,7 @@ function toAccountInfo(loyaltyAccount) {
   accountInfo.lastName = loyaltyAccount.last_name;
   accountInfo.phone = loyaltyAccount.phone;
   accountInfo.email = loyaltyAccount.email;
+  accountInfo.pointsBalance = loyaltyAccount.points;
   return accountInfo;
 }
 
