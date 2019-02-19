@@ -36,7 +36,7 @@ Then start the server with:
 npm start
 ```
 
-Now the server will be running at `localhost:18181`
+Now the server will be running at `localhost:18182`
 
 By default it will use the public key (for JWT verification) from the Toast sandbox environment. However you can change the URL of the public key by supplying it as an argument to `npm install`. So if I wanted to use the public key from the Toast production environment I would supply run the server like so:
 
