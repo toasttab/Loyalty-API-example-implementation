@@ -2,6 +2,11 @@ const db = require('./db')
 
 function create(type, transactionGuid, identifier, criteria, amount, redemptions){
   if (transactionGuid == null) throw "ERROR_INVALID_INPUT_PROPERTIES";
+
+  for (var i in redemptions) {
+    redemptions[i].reversed = false;
+  }
+
   db.push('transactions', {
     guid: transactionGuid,
     method: type,

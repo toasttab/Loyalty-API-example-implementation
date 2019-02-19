@@ -40,21 +40,37 @@ function accrue(identifier, points) {
   db.update(account);
 }
 
-function reverseRedeem(identifier, transaction) {
+function reverseRedeem(identifier, transaction, reverseRedemptions) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
   var availableRewards = account.availableRewards;
   var redemptions = transaction.redemptions;
 
-  var redemptions_id_quantity_map = {};
+  var redemptions_guid_index_map = {};
   for (var i in redemptions) {
-    var id = redemptions[i].identifier;
-    if (redemptions_id_quantity_map[id]) {
-      redemptions_id_quantity_map[id]++;
+    redemptions_guid_index_map[redemptions[i].appliedDiscountGuid] = i;
+  }
+
+  var redemptions_id_quantity_map = {};
+  for (var i in reverseRedemptions) {
+    var guid = reverseRedemptions[i].appliedDiscountGuid;
+    if (redemptions_guid_index_map[guid]) {
+      if (redemptions[redemptions_guid_index_map[guid]].reversed == false) {
+        var id = redemptions[redemptions_guid_index_map[guid]].identifier;
+        if (redemptions_id_quantity_map[id]) {
+          redemptions_id_quantity_map[id]++;
+        } else {
+          redemptions_id_quantity_map[id] = 1;
+        }
+      } else {
+        throw "ERROR_TRANSACTION_CANNOT_BE_REVERSED";
+      }
     } else {
-      redemptions_id_quantity_map[id] = 1;
+      throw "ERROR_TRANSACTION_DOES_NOT_EXIST";
     }
   }
+
+  console.log(reverseRedemptions);
 
   var i = availableRewards.length;
   while (i--) {
@@ -76,7 +92,13 @@ function reverseRedeem(identifier, transaction) {
   }
   db.update(account);
 
-  transaction.reversed = true;
+
+  // updated reverse status
+  for (var i in reverseRedemptions) {
+    var guid = reverseRedemptions[i].appliedDiscountGuid;
+    redemptions[redemptions_guid_index_map[guid]].reversed = true;
+  }
+
   db.update(transaction);
 }
 
