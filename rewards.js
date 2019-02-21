@@ -9,16 +9,19 @@ function getOffer(value, quantity, check_item_guid_map, redemptions_id_quantity_
 function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_map) {
   var check = checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_quantity_map);
   var offer = {};
+  var amount = 0.01;
+  if (reward.type != "PERCENT") {
+    amount = reward.amount;
+  }
   offer.identifier = reward.id;
   offer.name = reward.name;
   offer.applicable = check.applicable;
   offer.selectionType = reward.scope;
-  offer.type = reward.type;
-  offer.amount = reward.amount;
-  if (offer.selectionType == "ITEM") {
+  offer.amount = amount
+  if (offer.selectionType == "ITEM" && check.item_id != null) {
     var itemInfo = {};
     itemInfo.selectionIdentifier = check.item_id;
-    itemInfo.amount = reward.amount;
+    itemInfo.amount = amount
     offer.itemApplication = [];
     offer.itemApplication.push(itemInfo);
   }

@@ -211,12 +211,12 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
             rejectedRedemptions.push(redemption);
           } else {
             redemptions_id_quantity_map[id]++;
-            availableRedemptions.push(redemptions[i]);
+            availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
           }
         } else {
           if (availableQuantity > 0) {
             redemptions_id_quantity_map[id] = 1;
-            availableRedemptions.push(redemptions[i]);
+            availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
           } else {
             var redemption = {
               "redemption": redemptions[i], 
@@ -268,6 +268,26 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   }
 
   return result;
+}
+
+function updateRedemption(reward, redemption, check) {
+  if (reward.type == "PERCENT") {
+    if (reward.scope == "CHECK") {
+      var amount = check.amount;
+      redemption.amount = amount * reward.amount / 100;
+    } else {
+      if (check.selections != null) { 
+        for (var i in check.selections) {
+          var selection = check.selections[i];
+          if (selection.guid == redemption.selectionGuid) {
+            var amount = selection.preDiscountPrice;
+            redemption.amount = amount * reward.amount / 100;
+          }
+        }
+      }
+    }
+  }
+  return redemption;
 }
 
 module.exports = {search, accrue, inquireOrRedeem, reverseRedeem, reverseAccrue};
