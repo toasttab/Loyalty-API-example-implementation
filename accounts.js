@@ -183,23 +183,25 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   var availableRedemptions = [];
 
   // Get all the available item in the check
-  check_item_guid_map = {};
+  item_to_selection_map = {};
   if (check.selections != null) {
     for (var i in check.selections) {
       var selection = check.selections[i];
       // Can't apply discounts to items with discounts
       if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
-        if (check_item_guid_map[selection.guid]) {
-          check_item_guid_map[selection.item.guid].push(selection.guid);
+        if (item_to_selection_map[selection.guid]) {
+          item_to_selection_map[selection.item.guid].selections.push(selection);
         } else {
-          check_item_guid_map[selection.item.guid] = [selection.guid];
+          item_to_selection_map[selection.item.guid] = {}
+          item_to_selection_map[selection.item.guid].selections = [selection];
         }
         for (var j in selection.modifiers) {
           var modifier = selection.modifiers[j];
-          if (check_item_guid_map[modifier.item.guid]) {
-            check_item_guid_map[modifier.item.guid].push(selection.guid);
+          if (item_to_selection_map[modifier.item.guid]) {
+            item_to_selection_map[modifier.item.guid].selections.push(selection);
           } else {
-            check_item_guid_map[modifier.item.guid] = [selection.guid];
+            item_to_selection_map[modifier.item.guid] = {}
+            item_to_selection_map[modifier.item.guid].selections = [selection];
           }
         }
       }
@@ -218,7 +220,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     if (availableRewards_id_quantity_map[id]) {
       var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
-      if (reward.type == "BOGO" && check_item_guid_map[reward.prereq] == null) {
+      if (reward.type == "BOGO" && item_to_selection_map[reward.prereq] == null) {
         var redemption = {
           "redemption": redemptions[i],
           "message": "Requisite item not on check"
@@ -232,6 +234,12 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
               "message": "more than available quantity"
             }
             rejectedRedemptions.push(redemption);
+          } else if (item_to_selection_map[reward.prereq].selections[0].amountOfBOGOsLeft != null && item_to_selection_map[reward.prereq].selections[0].amountOfBOGOsLeft <= 0) {
+            var redemption = {
+              "redemption": redemptions[i],
+              "message": "the BOGO can no longer be applied"
+            }
+            rejectedRedemptions.push(redemption);
           } else {
             redemptions_id_quantity_map[id]++;
             availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
@@ -239,6 +247,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
         } else {
           if (availableQuantity > 0) {
             redemptions_id_quantity_map[id] = 1;
+            item_to_selection_map[reward.prereq].selections[0].amountOfBOGOsLeft = item_to_selection_map[reward.prereq].selections[0].quantity - 1
             availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
           } else {
             var redemption = {
@@ -265,7 +274,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     if (redemptions_id_quantity_map[id]) {
       currentQuantity = currentQuantity - redemptions_id_quantity_map[id];
     }
-    offers.push(rewards.getOffer(id, currentQuantity, check_item_guid_map, redemptions_id_quantity_map));
+    offers.push(rewards.getOffer(id, currentQuantity, item_to_selection_map, redemptions_id_quantity_map));
   }
 
   if (transactionType == "LOYALTY_REDEEM" && (rejectedRedemptions === undefined || rejectedRedemptions.length == 0)) {
