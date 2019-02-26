@@ -310,6 +310,9 @@ function updateRedemption(reward, redemption, check) {
       }
     }
   }
+  if (reward.type == "RANDOM") {
+    redemption.amount = Math.floor(Math.random() * reward.amount * 100)/100;
+  }
   return redemption;
 }
 

@@ -34,7 +34,11 @@
         {
           "id": "2",
           "quantity": 7
-        }
+        },
+        {
+          "id": "7",
+          "quantity": 7
+        }        
       ],
       "active": true
     },
@@ -118,6 +122,15 @@
       "item_id": [],
       "amount": "5",
       "expiryDate": "2029-09-09T20:44:29.439+0000"
+    },
+    {
+      "id": "7",
+      "name": "Random discount",
+      "description": "This discount amount changes every time",
+      "scope": "CHECK",
+      "item_id": [],
+      "type": "RANDOM",
+      "amount": "10"
     }
   ],
   "transactions": [

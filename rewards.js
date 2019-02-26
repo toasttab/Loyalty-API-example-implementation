@@ -13,6 +13,9 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   if (reward.type != "PERCENT") {
     amount = reward.amount;
   }
+  if (reward.type == "RANDOM") {
+    amount = Math.floor(Math.random() * amount * 100)/100;
+  }
   offer.identifier = reward.id;
   offer.name = reward.name;
   offer.applicable = check.applicable;
