@@ -16,8 +16,8 @@ function accrue(identifier, points) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
   var newPoints = account.points + points;
-  if (Math.floor(newPoints/50) > 0) {
-    var quantity = Math.floor(newPoints/50);
+  if (Math.floor(newPoints / 50) > 0) {
+    var quantity = Math.floor(newPoints / 50);
     var availableRewards = account.availableRewards;
     var reward;
     for (var i in availableRewards) {
@@ -27,9 +27,9 @@ function accrue(identifier, points) {
     }
     if (reward) {
       reward.quantity = reward.quantity + quantity;
-    } else {  
+    } else {
       var redemption = {
-        "id":"2", 
+        "id": "2",
         "quantity": quantity
       }
       account.availableRewards.push(redemption);
@@ -121,10 +121,10 @@ function reverseAccrue(identifier, transaction) {
     }
     if (!reward) throw "ERROR_UNABLE_TO_REVERSE";
 
-    var currentPoints = reward.quantity*50 + account.points;
+    var currentPoints = reward.quantity * 50 + account.points;
     var afterReversePoints = currentPoints - points;
-    if (Math.floor(afterReversePoints/50) > 0) {
-      var quantity = Math.floor(afterReversePoints/50);
+    if (Math.floor(afterReversePoints / 50) > 0) {
+      var quantity = Math.floor(afterReversePoints / 50);
       reward.quantity = quantity;
       afterReversePoints = afterReversePoints % 50;
     } else {
@@ -139,7 +139,7 @@ function reverseAccrue(identifier, transaction) {
 }
 
 function findByNumber(value) {
-  return db.find('loyalty_accounts', {number: value});
+  return db.find('loyalty_accounts', { number: value });
 }
 
 function findByKey(key, value) {
@@ -175,7 +175,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   // get the account information and all available offers
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
-  if(!account['active']) throw "ERROR_CARD_NOT_ACTIVATED";
+  if (!account['active']) throw "ERROR_CARD_NOT_ACTIVATED";
   var availableRewards = account.availableRewards;
 
   var offers = [];
@@ -184,7 +184,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
 
   // Get all the available item in the check
   check_item_guid_map = {};
-  if (check.selections != null) { 
+  if (check.selections != null) {
     for (var i in check.selections) {
       var selection = check.selections[i];
       // Can't apply discounts to items with discounts
@@ -216,19 +216,19 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   for (var i in redemptions) {
     var id = redemptions[i].identifier;
     if (availableRewards_id_quantity_map[id]) {
-      var reward = db.find('rewards', {id: id});
+      var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
       if (reward.type == "BOGO" && check_item_guid_map[reward.prereq] == null) {
         var redemption = {
-          "redemption": redemptions[i], 
+          "redemption": redemptions[i],
           "message": "Requisite item not on check"
         }
-        rejectedRedemptions.push(redemption);          
+        rejectedRedemptions.push(redemption);
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {
             var redemption = {
-              "redemption": redemptions[i], 
+              "redemption": redemptions[i],
               "message": "more than available quantity"
             }
             rejectedRedemptions.push(redemption);
@@ -242,7 +242,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
             availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
           } else {
             var redemption = {
-              "redemption": redemptions[i], 
+              "redemption": redemptions[i],
               "message": "not available"
             }
             rejectedRedemptions.push(redemptions);
@@ -251,7 +251,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
       }
     } else {
       var redemption = {
-        "redemption": redemptions[i], 
+        "redemption": redemptions[i],
         "message": "this is not an available reward"
       }
       rejectedRedemptions.push(redemption);
@@ -264,7 +264,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     var currentQuantity = availableRewards_id_quantity_map[id];
     if (redemptions_id_quantity_map[id]) {
       currentQuantity = currentQuantity - redemptions_id_quantity_map[id];
-    } 
+    }
     offers.push(rewards.getOffer(id, currentQuantity, check_item_guid_map, redemptions_id_quantity_map));
   }
 
@@ -299,7 +299,7 @@ function updateRedemption(reward, redemption, check) {
       var amount = check.amount;
       redemption.amount = amount * reward.amount / 100;
     } else {
-      if (check.selections != null) { 
+      if (check.selections != null) {
         for (var i in check.selections) {
           var selection = check.selections[i];
           if (selection.guid == redemption.selectionGuid) {
@@ -316,4 +316,4 @@ function updateRedemption(reward, redemption, check) {
   return redemption;
 }
 
-module.exports = {search, accrue, inquireOrRedeem, reverseRedeem, reverseAccrue};
+module.exports = { search, accrue, inquireOrRedeem, reverseRedeem, reverseAccrue };

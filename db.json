@@ -89,7 +89,7 @@
       "description": "item level BOGO",
       "scope": "ITEM",
       "item_id": [
-        "0791bfaa-985b-4b0b-b8c2-77fef93df41c"
+        "067baa4b-112e-4ed1-a925-510f3e3f5b1a"
       ],
       "amount": "9.50",
       "type": "BOGO",
@@ -133,7 +133,5 @@
       "amount": "10"
     }
   ],
-  "transactions": [
- 
-  ]
+  "transactions": []
 }
