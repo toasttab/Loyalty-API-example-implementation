@@ -4,13 +4,21 @@
       "number": "1",
       "first_name": "james",
       "last_name": "smith",
-      "email": "a1@gmail.com",
+      "email": "a1@toasttab.com",
       "phone": "1111111111",
       "points": 40,
       "availableRewards": [
         {
+          "id": "1",
+          "quantity": 5
+        },
+        {
           "id": "4",
-          "quantity": 2
+          "quantity": 10
+        },
+        {
+          "id": "5",
+          "quantity": 1
         }
       ],
       "active": true
@@ -19,14 +27,18 @@
       "number": "2",
       "first_name": "john",
       "last_name": "johnson",
-      "email": "a2@gmail.com",
+      "email": "a2@toasttab.com",
       "phone": "1111111112",
-      "points": 0,
+      "points": 49,
       "availableRewards": [
         {
           "id": "2",
-          "quantity": 1
-        }
+          "quantity": 7
+        },
+        {
+          "id": "7",
+          "quantity": 7
+        }        
       ],
       "active": true
     },
@@ -34,17 +46,21 @@
       "number": "3",
       "first_name": "jack",
       "last_name": "williams",
-      "email": "a3@gmail.com",
+      "email": "a3@toasttab.com",
       "phone": "1111111113",
       "points": 80,
       "availableRewards": [
         {
           "id": "1",
-          "quantity": 5
+          "quantity": 6
         },
         {
           "id": "3",
-          "quantity": 10
+          "quantity": 9
+        },
+        {
+          "id": "5",
+          "quantity": 6
         }
       ],
       "active": true
@@ -53,67 +69,69 @@
   "rewards": [
     {
       "id": "1",
-      "name": "reward 1",
-      "description": "this is a check level percentage reward",
+      "name": "$4 off check",
+      "description": "this is a check level reward",
       "scope": "CHECK",
-      "type": "PERCENT",
-      "item_id": "",
-      "amount": "5"
+      "item_id": [],
+      "amount": "4"
     },
     {
       "id": "2",
-      "name": "reward 2",
+      "name": "$10 off check",
       "description": "check level dollar reward",
       "scope": "CHECK",
-      "type": "FIXED",
-      "item_id": "",
-      "amount": "5"
+      "item_id": [],
+      "amount": "10"
     },
     {
       "id": "3",
-      "name": "reward 3",
-      "description": "item level percentage",
+      "name": "Free Sliders with Crab Cakes",
+      "description": "item level BOGO",
       "scope": "ITEM",
-      "type": "PERCENT",
-      "item_id": "1",
-      "amount": "10"
+      "item_id": [
+        "067baa4b-112e-4ed1-a925-510f3e3f5b1a"
+      ],
+      "amount": "9.50",
+      "type": "BOGO",
+      "prereq": "5abf524e-31b5-4c1b-a797-7a44d888d071"
     },
     {
       "id": "4",
-      "name": "reward 3",
+      "name": "$5 off crab cakes",
       "description": "item level dollar",
       "scope": "ITEM",
-      "type": "FIXED",
-      "item_id": "2",
+      "item_id": [
+        "5abf524e-31b5-4c1b-a797-7a44d888d071"
+      ],
+      "amount": "5"
+    },
+    {
+      "id": "5",
+      "name": "10% off check",
+      "description": "check percentage",
+      "scope": "CHECK",
+      "item_id": [],
+      "type": "PERCENT",
+      "amount": "10"
+    },
+    {
+      "id": "6",
+      "name": "limited time offer",
+      "description": "check level dollar limited time",
+      "scope": "CHECK",
+      "item_id": [],
+      "amount": "5",
+      "expiryDate": "2029-09-09T20:44:29.439+0000"
+    },
+    {
+      "id": "7",
+      "name": "Random discount",
+      "description": "This discount amount changes every time",
+      "scope": "CHECK",
+      "item_id": [],
+      "type": "RANDOM",
       "amount": "10"
     }
   ],
-  "transactions": [
-    {
-      "guid": "449191cb-1479-4046-a1e1-4ff761bffae5",
-      "method": "LOYALTY_ACCRUE",
-      "amount": 5,
-      "cardNumber": "2",
-      "reversed": false
-    },
-    {
-      "guid": "40d052e0-9df4-4ed1-906e-9072a46f6cfa",
-      "method": "LOYALTY_REVERSE",
-      "cardNumber": "2",
-      "reversed": false
-    },
-    {
-      "guid": "13ae2bf3-86a8-478a-aa7a-26a523cef4fe",
-      "method": "LOYALTY_REDEEM",
-      "amount": 2,
-      "redemptions": [
-        {
-          "id": "2",
-          "quantity": 1
-        }
-      ],
-      "cardNumber": "2",
-      "reversed": false
-    }
-  ]
+  "transactions": []
 }
