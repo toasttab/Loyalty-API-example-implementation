@@ -73,6 +73,18 @@ http
         body = JSON.parse(body); // converting body string to JSON
         console.log(util.inspect(body, false, null, true));
         var info, identifier, check, redemptions, responseBody;
+
+
+        debugger;
+        responseBody = { "transactionStatus": null };
+        responseBody["message"] = "sadhugkjh";
+        res.writeHead(400, { "Content-Type": "application/json" });
+        console.log("THIS IS BROKENNNNNSAJKHDFCXUFASYJTKUFUTLDFYASJYCKDYLGASFCIUDGJKVCTAIFXYU");
+        res.end(JSON.stringify(responseBody));
+        return;
+
+
+
         switch (transactionType) {
           case "LOYALTY_SEARCH":
             info = getPropOrErr(body, "searchTransactionInformation");
@@ -218,10 +230,9 @@ function parseCheckTransactionInformation(
   );
 
   // Redeem successfully
-  if (transactionType == "LOYALTY_REDEEM" && 
-        (result["rejectedRedemptions"] === undefined ||
-         result["rejectedRedemptions"].length == 0)) 
-  {
+  if (transactionType == "LOYALTY_REDEEM" &&
+    (result["rejectedRedemptions"] === undefined ||
+      result["rejectedRedemptions"].length == 0)) {
     transactions.create(
       transactionType,
       transactionGuid,
