@@ -12,6 +12,26 @@ function search(criteria) {
   return result;
 }
 
+// Transfer Rule: cannot transfer loyalty account to an existing account
+function transfer(fromIdentifier, toIdentifier) {
+    var fromAccount = findByNumber(fromIdentifier);
+    var toAccount = findByNumber(toIdentifier);
+    if (!fromAccount) throw "ERROR_INVALID_TRANSFER";
+    if (toAccount) {
+      throw "ERROR_INVALID_TRANSFER"
+    } else {
+      fromAccount.number = toIdentifier;
+      db.push('loyalty_accounts', fromAccount);
+    }
+
+    toAccount = findByNumber(toIdentifier);
+
+    return result = {
+      loyaltyIdentifier: toAccount.number
+    }
+
+}
+
 function accrue(identifier, points) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
@@ -316,4 +336,4 @@ function updateRedemption(reward, redemption, check) {
   return redemption;
 }
 
-module.exports = { search, accrue, inquireOrRedeem, reverseRedeem, reverseAccrue };
+module.exports = { search, accrue, inquireOrRedeem, reverseRedeem, reverseAccrue, transfer };

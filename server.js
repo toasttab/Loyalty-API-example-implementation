@@ -102,6 +102,15 @@ http
               res,
               responseBody
             );
+          case "LOYALTY_TRANSFER":
+            var info = getPropOrErr(body, "transferTransactionInformation");
+            identifier = getPropOrErr(info, "fromLoyaltyIdentifier");
+            var newIdentifier = getPropOrErr(info, "toLoyaltyIdentifier");
+            accounts.transfer(identifier, newIdentifier);
+            responseBody = {
+                transferResponse: result
+            };
+            return successResponse(res, responseBody);
           case "LOYALTY_REVERSE":
             var info = getPropOrErr(body, "reverseTransactionInformation");
             identifier = getPropOrErr(info, "loyaltyIdentifier");
@@ -255,6 +264,7 @@ function reverse(loyaltyIdentifier, transactionId, redemptions) {
     case "LOYALTY_SEARCH":
     case "LOYALTY_VALIDATE":
     case "LOYALTY_REVERSE":
+    case "LOYALTY_TRANSFER":
       throw "ERROR_TRANSACTION_CANNOT_BE_REVERSED";
     case "LOYALTY_REDEEM":
       return reverseRedeem(loyaltyIdentifier, transaction, redemptions);
