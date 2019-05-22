@@ -21,7 +21,7 @@ function transfer(fromIdentifier, toIdentifier) {
       throw "ERROR_INVALID_TRANSFER"
     } else {
       fromAccount.number = toIdentifier;
-      db.push('loyalty_accounts', fromAccount);
+      db.update('loyalty_accounts', fromAccount);
     }
 
     toAccount = findByNumber(toIdentifier);
