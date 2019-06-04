@@ -29,12 +29,14 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
     }
     offer.expiration.push(expirationDate);
   }
-  if (offer.selectionType == "ITEM" && check.item_id != null) {
-    var itemInfo = {};
-    itemInfo.selectionIdentifier = check.item_id;
-    itemInfo.amount = amount
+  if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null) {
     offer.itemApplication = [];
-    offer.itemApplication.push(itemInfo);
+    check.item_id.forEach(function(selection) {
+      var itemInfo = {};
+      itemInfo.selectionIdentifier = selection;
+      itemInfo.amount = amount / check.item_id.length
+      offer.itemApplication.push(itemInfo);
+    })
   }
   offer.quantity = quantity > 0 ? quantity : 0;
 
@@ -48,6 +50,7 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
 //    4. the reward is always apply to the first item available in the list and the check
 function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_quantity_map) {
   var result = {}
+  result.item_id = []
   var itemsApplied = reward.item_id;
 
   if (quantity <= 0) {
@@ -59,18 +62,29 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
     result.applicable = true;
     return result;
   }
+  if (reward.type == "MULTI_ITEM") {
+    for (var i in itemsApplied) {
+      var id = itemsApplied[i];
+      if (!check_item_guid_map[id]) {
+        result.applicable = false;
+        return result;
+      }
+      result.item_id.push( check_item_guid_map[id][0] );
+    }
+    result.applicable = true;
+    return result;
+  }
 
   if (reward.type == null || reward.type != "BOGO" || check_item_guid_map[reward.prereq] != null) {
     for (var i in itemsApplied) {
       var id = itemsApplied[i];
       if (check_item_guid_map[id]) {
         result.applicable = true;
-        result.item_id = check_item_guid_map[id][0];
+        result.item_id.push( check_item_guid_map[id][0] );
         return result;
       }
     }
   }
-
   result.applicable = false;
   return result;
 }
