@@ -316,7 +316,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
 function updateRedemption(reward, redemption, check) {
   if (reward.type == "PERCENT") {
     if (reward.scope == "CHECK") {
-      var amount = check.totalAmount - check.taxAmount;
+      var amount = check.totalAmount + redemption.amount - check.taxAmount;
       redemption.amount = amount * reward.amount / 100;
     } else {
       if (check.selections != null) {
