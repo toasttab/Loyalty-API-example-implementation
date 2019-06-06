@@ -31,10 +31,12 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   }
   if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null) {
     offer.itemApplication = [];
-    check.item_id.forEach(function(selection) {
+    offer.amount = 0
+    check.item_id.forEach(function(application) {
       var itemInfo = {};
-      itemInfo.selectionIdentifier = selection;
-      itemInfo.amount = amount / check.item_id.length
+      itemInfo.selectionIdentifier = application.selectionGUID
+      itemInfo.amount = application.amount
+      offer.amount += Number(application.amount)
       offer.itemApplication.push(itemInfo);
     })
   }
@@ -62,29 +64,20 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
     result.applicable = true;
     return result;
   }
-  if (reward.type == "MULTI_ITEM") {
-    for (var i in itemsApplied) {
-      var id = itemsApplied[i];
+  if (reward.type == "MULTI_ITEM" || reward.type == "ITEM") {
+    result.item_id = []
+    itemsApplied.forEach(function(item) {
+      var id = item.selectionGUID
       if (!check_item_guid_map[id]) {
         result.applicable = false;
         return result;
       }
-      result.item_id.push( check_item_guid_map[id][0] );
-    }
+      result.item_id.push(item)
+    })
     result.applicable = true;
     return result;
   }
 
-  if (reward.type == null || reward.type != "BOGO" || check_item_guid_map[reward.prereq] != null) {
-    for (var i in itemsApplied) {
-      var id = itemsApplied[i];
-      if (check_item_guid_map[id]) {
-        result.applicable = true;
-        result.item_id.push( check_item_guid_map[id][0] );
-        return result;
-      }
-    }
-  }
   result.applicable = false;
   return result;
 }
