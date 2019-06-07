@@ -29,7 +29,7 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
     }
     offer.expiration.push(expirationDate);
   }
-  if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null) {
+  if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null && check.applicable) {
     offer.itemApplication = [];
     offer.amount = 0
     check.item_id.forEach(function(application) {
@@ -66,14 +66,15 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
   }
   if (reward.type == "MULTI_ITEM" || reward.type == "ITEM") {
     result.item_id = []
-    itemsApplied.forEach(function(item) {
+    for ( i in itemsApplied) {
+      var item = itemsApplied[i]
       var id = item.selectionGUID
       if (!check_item_guid_map[id]) {
         result.applicable = false;
         return result;
       }
       result.item_id.push(item)
-    })
+    }
     result.applicable = true;
     return result;
   }
