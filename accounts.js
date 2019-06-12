@@ -204,9 +204,11 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
 
   // Get all the available item in the check
   check_item_guid_map = {};
+  all_selection_guids = {};
   if (check.selections != null) {
     for (var i in check.selections) {
       var selection = check.selections[i];
+      all_selection_guids[selection.guid] = selection.voided
       if (!selection.voided) {
         // Can't apply discounts to items with discounts
         if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
@@ -241,17 +243,17 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
       var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
       if (reward.type == "MULTI_ITEM") {
-        redemptions[i].itemApplication.forEach(function(application) {
-          console.log("****************************************** " + JSON.stringify(application))
-          if (!check_item_guid_map[application.selectionIdentifier]) {
+        for (var x in redemptions[i].itemApplication) {
+          var application = redemptions[i].itemApplication[x]
+          if (!all_selection_guids[application.selectionIdentifier]) {
             var redemption = {
               "redemption": redemptions[i],
               "message": "Not all requisit items are on the check"
             }
             rejectedRedemptions.push(redemption);
-            return false;
+            break;
           }
-        })
+        }
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {
