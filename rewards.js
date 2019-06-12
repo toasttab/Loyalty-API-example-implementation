@@ -68,12 +68,12 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
     result.item_id = []
     for ( i in itemsApplied) {
       var item = itemsApplied[i]
-      var id = item.selectionGUID
+      var id = item.menuItemGuid
       if (!check_item_guid_map[id]) {
         result.applicable = false;
         return result;
       }
-      result.item_id.push(item)
+      result.item_id.push({"selectionGUID":check_item_guid_map[id][0], "amount":item.amount})
     }
     result.applicable = true;
     return result;
