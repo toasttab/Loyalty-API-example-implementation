@@ -240,12 +240,18 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     if (availableRewards_id_quantity_map[id]) {
       var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
-      if (reward.type == "BOGO" && check_item_guid_map[reward.prereq] == null) {
-        var redemption = {
-          "redemption": redemptions[i],
-          "message": "Requisite item not on check"
-        }
-        rejectedRedemptions.push(redemption);
+      if (reward.type == "MULTI_ITEM") {
+        redemptions[i].itemApplication.forEach(function(application) {
+          console.log("****************************************** " + JSON.stringify(application))
+          if (!check_item_guid_map[application.selectionIdentifier]) {
+            var redemption = {
+              "redemption": redemptions[i],
+              "message": "Not all requisit items are on the check"
+            }
+            rejectedRedemptions.push(redemption);
+            return false;
+          }
+        })
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {
