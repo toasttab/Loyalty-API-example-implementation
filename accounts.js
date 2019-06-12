@@ -248,12 +248,14 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
           if (!all_selection_guids[application.selectionIdentifier]) {
             var redemption = {
               "redemption": redemptions[i],
-              "message": "Not all requisit items are on the check"
+              "message": "Not all requisite items are on the check"
             }
             rejectedRedemptions.push(redemption);
             break;
           }
         }
+        redemptions[i].quantity = 1
+        availableRedemptions.push(updateRedemption(reward, redemptions[i], check))
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {

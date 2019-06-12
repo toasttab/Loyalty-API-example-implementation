@@ -14,7 +14,7 @@
         },
         {
           "id": "4",
-          "quantity": 5
+          "quantity": 4
         },
         {
           "id": "8",
@@ -45,6 +45,10 @@
         },
         {
           "id": "4",
+          "quantity": 6
+        },
+        {
+          "id": "7",
           "quantity": 6
         }
       ],
@@ -3130,6 +3134,195 @@
     },
     {
       "guid": "9ed59441-0bc8-4314-9ef0-e894b9024118",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "d216f55c-b4cf-44ba-bead-6756fe3ecbf3",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "83d11922-2163-4682-b117-59d6da7a0913",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "577026de-72f6-4dcd-b4b7-c19535f6c7e1",
+      "method": "LOYALTY_REDEEM",
+      "redemptions": [
+        {
+          "identifier": "3",
+          "appliedDiscountGuid": "6075c401-bfb5-4743-8f55-0957d09d2565",
+          "selectionGuid": null,
+          "amount": 9.5,
+          "itemApplication": [
+            {
+              "selectionIdentifier": "d5823acc-dced-498f-a58a-e5c300eae625",
+              "amount": 9.5,
+              "appliedDiscountIdentifier": "6d288307-53e9-40e2-a70c-1838248e15a6"
+            },
+            {
+              "selectionIdentifier": "e097ed35-4d47-42b3-82eb-72e0dae38722",
+              "amount": 0,
+              "appliedDiscountIdentifier": "86c817d3-685b-4127-a845-aa03467bf191"
+            }
+          ],
+          "quantity": 0,
+          "reversed": false
+        }
+      ],
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "985c08c8-9412-4410-855e-854cb5900e43",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "9722dc4a-8846-4a6f-8a9f-87979d5386c3",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "286ebe2c-1d99-45f7-8f05-fbebe5c66844",
+      "method": "LOYALTY_REDEEM",
+      "redemptions": [
+        {
+          "identifier": "4",
+          "appliedDiscountGuid": "59574764-94e0-4bea-b3fc-2722c573d02b",
+          "selectionGuid": "d671d87b-d731-4a69-afd7-f5d318c9e095",
+          "amount": 5,
+          "itemApplication": null,
+          "quantity": 1,
+          "reversed": false
+        }
+      ],
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "44f240e7-73a3-4cd6-8fc7-c87e3abec636",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "3",
+      "reversed": false
+    },
+    {
+      "guid": "334bc266-062c-4431-aae8-f1659d7bb053",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "535e5960-7393-4295-b308-7505c4303933",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "84ebe943-c6af-4b39-86e5-61ec0a1f74b7",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "9cbee111-663e-4bed-8bd8-fc87436e5252",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "2658475b-3dea-44cd-b737-d5072ba6fd9d",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "2eaff92d-b0eb-43e6-89ff-36eb17cbf7f3",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "e92edb72-7d8a-4a01-bb61-ad8fcf7155a3",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "820c0fcc-9a8e-4e02-aefa-5e70510be11e",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "2f55340d-00b8-49b8-9ecb-da60c73bd67e",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "2cb39915-45d4-46a4-811e-fbe2a04f0acf",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "56dcb97b-3d54-44f2-9ded-aa5f58ab83a5",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "1",
+      "reversed": false
+    },
+    {
+      "guid": "36093d78-0511-4c00-b8ce-de6fe2378171",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "35c75067-8053-4f7f-8428-12d9c192561d",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "068087a3-cef1-4ea2-bce1-860005695fc0",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "e6286c57-b5f4-44f9-981a-b9593323c7a0",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "f4ee81ea-59f4-4777-b919-a5caea272451",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "540376ce-0dda-49fd-9d57-40fd01463bc3",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "75f6eb31-0ab2-401f-abea-ae3680dc06c8",
+      "method": "LOYALTY_INQUIRE",
+      "cardNumber": "2",
+      "reversed": false
+    },
+    {
+      "guid": "6208994d-0f31-4320-a41a-f723ca76790e",
       "method": "LOYALTY_INQUIRE",
       "cardNumber": "2",
       "reversed": false
