@@ -208,7 +208,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   if (check.selections != null) {
     for (var i in check.selections) {
       var selection = check.selections[i];
-      all_selection_guids[selection.guid] = selection.voided
+      all_selection_guids[selection.guid] = !selection.voided
       if (!selection.voided) {
         // Can't apply discounts to items with discounts
         if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
