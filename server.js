@@ -28,8 +28,6 @@ if (publicKeyUrl.includes("https")) {
   http.get(publicKeyUrl, res => parsePublicKey(res));
 }
 
-var port = 18182;
-
 // In a real implementation, HTTPS must be used
 http
   .createServer((req, res) => {
@@ -126,9 +124,9 @@ http
       }
     });
   })
-  .listen(port);
+  .listen(getPort());
 
-console.log("Server is up and listening at localhost:" + port);
+console.log("Server is up and listening at localhost:" + getPort());
 
 // Helper function
 function successResponse(res, responseBody) {
@@ -164,9 +162,16 @@ function getPropOrErr(info, infoProperty, error) {
   return prop;
 }
 
+function getPort() {
+  if (process.argv[3] != null) {
+    return process.argv[3];
+  } else {
+    return 18182;
+  }
+}
+
 function getPublicKeyUrl() {
   // get the publicKey URL, which can be supplied as an argument: `npm start <URL>` or `node server.js <URL>`
-  // if it is not supplied as an argument it will default to the Toast sandbox public key
   if (process.argv[2] != null) {
     return process.argv[2];
   } else {
