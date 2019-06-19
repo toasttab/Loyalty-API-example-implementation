@@ -243,19 +243,28 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
       var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
       if (reward.type == "MULTI_ITEM") {
+        var rejected = false
         for (var x in redemptions[i].itemApplication) {
           var application = redemptions[i].itemApplication[x]
-          if (!all_selection_guids[application.selectionIdentifier]) {
+          console.log("***********************************\n " + reward.item_id.length + " " + redemptions[i].itemApplication.length);
+          if (!all_selection_guids[application.selectionIdentifier] || reward.item_id.length > redemptions[i].itemApplication.length) {
             var redemption = {
               "redemption": redemptions[i],
-              "message": "Not all requisite items are on the check"
+              "message": "Not all requisit items are on the check"
             }
             rejectedRedemptions.push(redemption);
+            rejected = true
             break;
           }
         }
-        redemptions[i].quantity = 1
-        availableRedemptions.push(updateRedemption(reward, redemptions[i], check))
+        if (!rejected) {
+          availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
+          if (redemptions_id_quantity_map[id]) {
+            redemptions_id_quantity_map[id]++
+          } else {
+            redemptions_id_quantity_map[id] = 1;
+          }
+        }
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {
@@ -305,7 +314,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     while (i--) {
       var id = availableRewards[i].id;
       if (redemptions_id_quantity_map[id]) {
-        availableRewards[i].quantity = availableRewards[i].quantity - redemptions_id_quantity_map[id];
+        availableRewards[i].quantity -= redemptions_id_quantity_map[id];
         if (availableRewards[i].quantity == 0) {
           availableRewards.splice(i, 1);
         }
