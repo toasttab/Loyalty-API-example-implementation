@@ -68,12 +68,19 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
 
   var redemptions_guid_index_map = {};
   for (var i in redemptions) {
-    redemptions_guid_index_map[redemptions[i].appliedDiscountGuid] = i;
+    if (redemptions[i].appliedDiscountGuid) {
+      redemptions_guid_index_map[redemptions[i].appliedDiscountGuid] = i;
+    } else {
+      redemptions_guid_index_map[redemptions[i].multiItemDiscountGuid] = i;
+    }
   }
 
   var redemptions_id_quantity_map = {};
   for (var i in reverseRedemptions) {
+    // the guid will either be an appliedDiscountGuid (item/check level) or
+    // a multi level discount has its own guid
     var guid = reverseRedemptions[i].appliedDiscountGuid;
+    if (!guid) guid = reverseRedemptions[i].multiItemDiscountGuid;
     if (redemptions_guid_index_map[guid]) {
       if (redemptions[redemptions_guid_index_map[guid]].reversed == false) {
         var id = redemptions[redemptions_guid_index_map[guid]].identifier;
@@ -89,8 +96,6 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
       throw "ERROR_TRANSACTION_DOES_NOT_EXIST";
     }
   }
-
-  console.log(reverseRedemptions);
 
   var i = availableRewards.length;
   while (i--) {
@@ -246,7 +251,8 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
         var rejected = false
         for (var x in redemptions[i].itemApplication) {
           var application = redemptions[i].itemApplication[x]
-          console.log("***********************************\n " + reward.item_id.length + " " + redemptions[i].itemApplication.length);
+          // item is not on check (not in all_selection_guids), voided (false in all_selection_guids),
+          // or there are more required items in the ward than the redemption has
           if (!all_selection_guids[application.selectionIdentifier] || reward.item_id.length > redemptions[i].itemApplication.length) {
             var redemption = {
               "redemption": redemptions[i],
