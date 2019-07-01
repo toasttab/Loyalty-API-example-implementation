@@ -32,6 +32,7 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
   if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null && check.applicable) {
     offer.itemApplication = [];
     offer.amount = 0
+    offer.quantity = 1
     check.item_id.forEach(function(application) {
       var itemInfo = {};
       itemInfo.selectionIdentifier = application.selectionGUID
@@ -64,7 +65,7 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
     result.applicable = true;
     return result;
   }
-  if (reward.type == "MULTI_ITEM" || reward.type == "ITEM") {
+  if (reward.scope == "MULTI_ITEM" || reward.type == "ITEM") {
     result.item_id = []
     for ( i in itemsApplied) {
       var item = itemsApplied[i]

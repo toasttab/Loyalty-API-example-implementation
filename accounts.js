@@ -121,7 +121,12 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
   // updated reverse status
   for (var i in reverseRedemptions) {
     var guid = reverseRedemptions[i].appliedDiscountGuid;
-    redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    if (guid) {
+      redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    } else {
+      guid = reverseRedemptions[i].multiItemDiscountGuid;
+      redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    }
   }
 
   db.update(transaction);
@@ -345,20 +350,18 @@ function updateRedemption(reward, redemption, check) {
     if (reward.scope == "CHECK") {
       var amount = check.totalAmount + redemption.amount - check.taxAmount;
       redemption.amount = amount * reward.amount / 100;
-    } else {
-      if (check.selections != null) {
-        for (var i in check.selections) {
-          var selection = check.selections[i];
-          if (selection.guid == redemption.selectionGuid) {
-            var amount = selection.preDiscountPrice;
-            redemption.amount = amount * reward.amount / 100;
-          }
-        }
-      }
     }
   }
   if (reward.type == "RANDOM") {
-    redemption.amount = Math.floor(Math.random() * reward.amount * 100)/100;
+    // if random multi item give each item $ value from $0.00 - $7.99
+    if (redemption.itemApplication) {
+      for (var i = 0; i < redemption.itemApplication.length; i++) {
+        redemption.itemApplication[i].amount = Math.floor(Math.random() * 7) + Math.random() + Math.random() * 0.1
+        redemption.amount += redemption.itemApplication[i].amount
+      }
+    } else {
+      redemption.amount = Math.floor(Math.random() * reward.amount * 100)/100;
+    }
   }
   return redemption;
 }
