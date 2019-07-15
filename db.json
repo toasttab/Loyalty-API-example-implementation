@@ -45,7 +45,7 @@
         },
         {
           "id": "4",
-          "quantity": 194
+          "quantity": 195
         },
         {
           "id": "9",
@@ -110,7 +110,7 @@
       "scope": "MULTI_ITEM",
       "item_id": [
         {
-          "menuItemGuid": "5d819538-9c22-45d3-bce0-50d3659676ba",
+          "menuItemGuid": "e92ffd52-a2a3-4d1e-9700-4e1dd62376b4",
           "amount": "9.5"
         },
         {
@@ -177,7 +177,7 @@
       "scope": "MULTI_ITEM",
       "item_id": [
         {
-          "menuItemGuid": "5d819538-9c22-45d3-bce0-50d3659676ba",
+          "menuItemGuid": "e92ffd52-a2a3-4d1e-9700-4e1dd62376b4",
           "amount": "0"
         },
         {
