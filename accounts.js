@@ -68,12 +68,19 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
 
   var redemptions_guid_index_map = {};
   for (var i in redemptions) {
-    redemptions_guid_index_map[redemptions[i].appliedDiscountGuid] = i;
+    if (redemptions[i].appliedDiscountGuid) {
+      redemptions_guid_index_map[redemptions[i].appliedDiscountGuid] = i;
+    } else {
+      redemptions_guid_index_map[redemptions[i].multiItemDiscountGuid] = i;
+    }
   }
 
   var redemptions_id_quantity_map = {};
   for (var i in reverseRedemptions) {
+    // the guid will either be an appliedDiscountGuid (item/check level) or
+    // a multi level discount has its own guid
     var guid = reverseRedemptions[i].appliedDiscountGuid;
+    if (!guid) guid = reverseRedemptions[i].multiItemDiscountGuid;
     if (redemptions_guid_index_map[guid]) {
       if (redemptions[redemptions_guid_index_map[guid]].reversed == false) {
         var id = redemptions[redemptions_guid_index_map[guid]].identifier;
@@ -89,8 +96,6 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
       throw "ERROR_TRANSACTION_DOES_NOT_EXIST";
     }
   }
-
-  console.log(reverseRedemptions);
 
   var i = availableRewards.length;
   while (i--) {
@@ -116,7 +121,12 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
   // updated reverse status
   for (var i in reverseRedemptions) {
     var guid = reverseRedemptions[i].appliedDiscountGuid;
-    redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    if (guid) {
+      redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    } else {
+      guid = reverseRedemptions[i].multiItemDiscountGuid;
+      redemptions[redemptions_guid_index_map[guid]].reversed = true;
+    }
   }
 
   db.update(transaction);
@@ -204,22 +214,26 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
 
   // Get all the available item in the check
   check_item_guid_map = {};
+  all_selection_guids = {};
   if (check.selections != null) {
     for (var i in check.selections) {
       var selection = check.selections[i];
-      // Can't apply discounts to items with discounts
-      if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
-        if (check_item_guid_map[selection.guid]) {
-          check_item_guid_map[selection.item.guid].push(selection.guid);
-        } else {
-          check_item_guid_map[selection.item.guid] = [selection.guid];
-        }
-        for (var j in selection.modifiers) {
-          var modifier = selection.modifiers[j];
-          if (check_item_guid_map[modifier.item.guid]) {
-            check_item_guid_map[modifier.item.guid].push(selection.guid);
+      all_selection_guids[selection.guid] = !selection.voided
+      if (!selection.voided) {
+        // Can't apply discounts to items with discounts
+        if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
+          if (check_item_guid_map[selection.guid]) {
+            check_item_guid_map[selection.item.guid].push(selection.guid);
           } else {
-            check_item_guid_map[modifier.item.guid] = [selection.guid];
+            check_item_guid_map[selection.item.guid] = [selection.guid];
+          }
+          for (var j in selection.modifiers) {
+            var modifier = selection.modifiers[j];
+            if (check_item_guid_map[modifier.item.guid]) {
+              check_item_guid_map[modifier.item.guid].push(selection.guid);
+            } else {
+              check_item_guid_map[modifier.item.guid] = [selection.guid];
+            }
           }
         }
       }
@@ -238,12 +252,30 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     if (availableRewards_id_quantity_map[id]) {
       var reward = db.find('rewards', { id: id });
       var availableQuantity = availableRewards_id_quantity_map[id];
-      if (reward.type == "BOGO" && check_item_guid_map[reward.prereq] == null) {
-        var redemption = {
-          "redemption": redemptions[i],
-          "message": "Requisite item not on check"
+      if (reward.type == "MULTI_ITEM") {
+        var rejected = false
+        for (var x in redemptions[i].itemApplication) {
+          var application = redemptions[i].itemApplication[x]
+          // item is not on check (not in all_selection_guids), voided (false in all_selection_guids),
+          // or there are more required items in the ward than the redemption has
+          if (!all_selection_guids[application.selectionIdentifier] || reward.item_id.length > redemptions[i].itemApplication.length) {
+            var redemption = {
+              "redemption": redemptions[i],
+              "message": "Not all requisit items are on the check"
+            }
+            rejectedRedemptions.push(redemption);
+            rejected = true
+            break;
+          }
         }
-        rejectedRedemptions.push(redemption);
+        if (!rejected) {
+          availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
+          if (redemptions_id_quantity_map[id]) {
+            redemptions_id_quantity_map[id]++
+          } else {
+            redemptions_id_quantity_map[id] = 1;
+          }
+        }
       } else {
         if (redemptions_id_quantity_map[id]) {
           if (redemptions_id_quantity_map[id] >= availableQuantity) {
@@ -293,7 +325,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     while (i--) {
       var id = availableRewards[i].id;
       if (redemptions_id_quantity_map[id]) {
-        availableRewards[i].quantity = availableRewards[i].quantity - redemptions_id_quantity_map[id];
+        availableRewards[i].quantity -= redemptions_id_quantity_map[id];
         if (availableRewards[i].quantity == 0) {
           availableRewards.splice(i, 1);
         }
@@ -318,20 +350,18 @@ function updateRedemption(reward, redemption, check) {
     if (reward.scope == "CHECK") {
       var amount = check.totalAmount + redemption.amount - check.taxAmount;
       redemption.amount = amount * reward.amount / 100;
-    } else {
-      if (check.selections != null) {
-        for (var i in check.selections) {
-          var selection = check.selections[i];
-          if (selection.guid == redemption.selectionGuid) {
-            var amount = selection.preDiscountPrice;
-            redemption.amount = amount * reward.amount / 100;
-          }
-        }
-      }
     }
   }
   if (reward.type == "RANDOM") {
-    redemption.amount = Math.floor(Math.random() * reward.amount * 100)/100;
+    // if random multi item give each item $ value from $0.00 - $7.99
+    if (redemption.itemApplication) {
+      for (var i = 0; i < redemption.itemApplication.length; i++) {
+        redemption.itemApplication[i].amount = Math.floor(Math.random() * 7) + Math.random() + Math.random() * 0.1
+        redemption.amount += redemption.itemApplication[i].amount
+      }
+    } else {
+      redemption.amount = Math.floor(Math.random() * reward.amount * 100)/100;
+    }
   }
   return redemption;
 }

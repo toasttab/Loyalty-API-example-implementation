@@ -29,12 +29,17 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
     }
     offer.expiration.push(expirationDate);
   }
-  if (offer.selectionType == "ITEM" && check.item_id != null) {
-    var itemInfo = {};
-    itemInfo.selectionIdentifier = check.item_id;
-    itemInfo.amount = amount
+  if ((offer.selectionType == "ITEM" || offer.selectionType == "MULTI_ITEM") && check.item_id != null && check.applicable) {
     offer.itemApplication = [];
-    offer.itemApplication.push(itemInfo);
+    offer.amount = 0
+    offer.quantity = 1
+    check.item_id.forEach(function(application) {
+      var itemInfo = {};
+      itemInfo.selectionIdentifier = application.selectionGUID
+      itemInfo.amount = application.amount
+      offer.amount += Number(application.amount)
+      offer.itemApplication.push(itemInfo);
+    })
   }
   offer.quantity = quantity > 0 ? quantity : 0;
 
@@ -48,6 +53,7 @@ function toOffer(reward, quantity, check_item_guid_map, redemptions_id_quantity_
 //    4. the reward is always apply to the first item available in the list and the check
 function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_quantity_map) {
   var result = {}
+  result.item_id = []
   var itemsApplied = reward.item_id;
 
   if (quantity <= 0) {
@@ -59,16 +65,19 @@ function checkApplicable(reward, quantity, check_item_guid_map, redemptions_id_q
     result.applicable = true;
     return result;
   }
-
-  if (reward.type == null || reward.type != "BOGO" || check_item_guid_map[reward.prereq] != null) {
-    for (var i in itemsApplied) {
-      var id = itemsApplied[i];
-      if (check_item_guid_map[id]) {
-        result.applicable = true;
-        result.item_id = check_item_guid_map[id][0];
+  if (reward.scope == "MULTI_ITEM" || reward.type == "ITEM") {
+    result.item_id = []
+    for ( i in itemsApplied) {
+      var item = itemsApplied[i]
+      var id = item.menuItemGuid
+      if (!check_item_guid_map[id]) {
+        result.applicable = false;
         return result;
       }
+      result.item_id.push({"selectionGUID":check_item_guid_map[id][0], "amount":item.amount})
     }
+    result.applicable = true;
+    return result;
   }
 
   result.applicable = false;
