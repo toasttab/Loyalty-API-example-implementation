@@ -232,7 +232,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
             }
           }
           for (var j in selection.modifiers) {
-            var modifier = selection.modifiers[j];     
+            var modifier = selection.modifiers[j];
             if (check_item_guid_map[modifier.item.guid]) {
               check_item_guid_map[modifier.item.guid].push(selection.guid);
             } else {
