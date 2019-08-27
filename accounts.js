@@ -219,13 +219,17 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     for (var i in check.selections) {
       var selection = check.selections[i];
       all_selection_guids[selection.guid] = !selection.voided
+      
       if (!selection.voided) {
         // Can't apply discounts to items with discounts
         if (selection.appliedDiscounts == null || selection.appliedDiscounts.length == 0) {
-          if (check_item_guid_map[selection.guid]) {
-            check_item_guid_map[selection.item.guid].push(selection.guid);
-          } else {
-            check_item_guid_map[selection.item.guid] = [selection.guid];
+          // gift card menu items selections have no backing item
+          if (selection.item) {
+            if (check_item_guid_map[selection.guid]) {
+              check_item_guid_map[selection.item.guid].push(selection.guid);
+            } else {
+              check_item_guid_map[selection.item.guid] = [selection.guid];
+            }
           }
           for (var j in selection.modifiers) {
             var modifier = selection.modifiers[j];
