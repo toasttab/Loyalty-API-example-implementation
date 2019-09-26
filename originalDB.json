@@ -42,7 +42,7 @@
         {
           "id": "7",
           "quantity": 7
-        }        
+        }
       ],
       "active": true
     },
@@ -68,6 +68,84 @@
         }
       ],
       "active": true
+    },
+    {
+      "number": "6003001000001448",
+      "first_name": "Hans",
+      "last_name": "Gruber",
+      "email": "hans.gruber@toasttab.com",
+      "phone": "6175486881",
+      "points": 125,
+      "availableRewards": [
+        {
+          "id": "1",
+          "quantity": 6
+        },
+        {
+          "id": "5",
+          "quantity": 9
+        },
+        {
+          "id": "6",
+          "quantity": 6
+        },
+        {
+          "id":"7",
+          "quantity": 4
+        },
+        {
+          "id":"8",
+          "quanityt": 2
+        },
+        {
+          "id":"11",
+          "quanitity":5
+        }
+      ],
+      "active": true
+    },
+    {
+      "number": "6003001000001984",
+      "first_name": "John",
+      "last_name": "McClane",
+      "email": "john.mcclane@toasttab.com",
+      "phone": "6175486881",
+      "points": 75,
+      "availableRewards": [
+        {
+          "id": "1",
+          "quantity": 6
+        },
+        {
+          "id": "5",
+          "quantity": 9
+        },
+        {
+          "id": "6",
+          "quantity": 6
+        },
+        {
+          "id":"7",
+          "quantity": 4
+        },
+        {
+          "id":"8",
+          "quantity": 2
+        },
+        {
+          "id":"11",
+          "quantity":5
+        },
+        {
+          "id":"12",
+          "quantity": 2
+        },
+        {
+          "id":"13",
+          "quantity": 5
+        }
+      ],
+      "active": true
     }
   ],
   "rewards": [
@@ -90,22 +168,32 @@
     {
       "id": "3",
       "name": "Free Sliders with Crab Cakes",
-      "description": "item level BOGO",
-      "scope": "ITEM",
+      "description": "Multi Item Bogo",
+      "scope": "MULTI_ITEM",
       "item_id": [
-        "067baa4b-112e-4ed1-a925-510f3e3f5b1a"
+        {
+          "menuItemGuid": "e92ffd52-a2a3-4d1e-9700-4e1dd62376b4",
+          "amount": "9.5"
+        },
+        {
+          "menuItemGuid": "5abf524e-31b5-4c1b-a797-7a44d888d071",
+          "amount": "0"
+        }
       ],
-      "amount": "9.50",
-      "type": "BOGO",
-      "prereq": "5abf524e-31b5-4c1b-a797-7a44d888d071"
+      "amount": "9.5",
+      "type": "MULTI_ITEM"
     },
     {
       "id": "4",
       "name": "$5 off crab cakes",
       "description": "item level dollar",
       "scope": "ITEM",
+      "type": "ITEM",
       "item_id": [
-        "5abf524e-31b5-4c1b-a797-7a44d888d071"
+        {
+          "menuItemGuid": "5abf524e-31b5-4c1b-a797-7a44d888d071",
+          "amount": "5"
+        }
       ],
       "amount": "5"
     },
@@ -143,6 +231,96 @@
       "scope": "CHECK",
       "item_id": [],
       "amount": "0"
+    },
+    {
+      "id": "9",
+      "name": "Random Amount off Sliders & Crab Cakes",
+      "description": "Random Multi Item",
+      "scope": "MULTI_ITEM",
+      "item_id": [
+        {
+          "menuItemGuid": "e92ffd52-a2a3-4d1e-9700-4e1dd62376b4",
+          "amount": "0"
+        },
+        {
+          "menuItemGuid": "5abf524e-31b5-4c1b-a797-7a44d888d071",
+          "amount": "0"
+        }
+      ],
+      "amount": "0",
+      "type": "RANDOM"
+    },
+    {
+      "id": "10",
+      "name": "10-5-2 Sandwich Deal",
+      "description": "Three Item Multi Item Discount",
+      "scope": "MULTI_ITEM",
+      "item_id": [
+        {
+          "menuItemGuid": "177e0bd1-31bb-4966-9d14-aed92d183c9d",
+          "amount": "10"
+        },
+        {
+          "menuItemGuid": "c683c950-7e4e-413f-b70f-d25baa19ec17",
+          "amount": "5"
+        },
+        {
+          "menuItemGuid": "405d20a5-56cc-4c4a-af7d-ce30a966aad9",
+          "amount": "2"
+        }
+      ],
+      "amount": "17",
+      "type": "MULTI_ITEM"
+    },
+    {
+      "id": "11",
+      "name": "$5 off totchos",
+      "description": "item level dollar",
+      "scope": "ITEM",
+      "type": "ITEM",
+      "item_id": [
+        {
+          "menuItemGuid": "27e5e6ac-6ea8-4844-b7b6-4090006018b1",
+          "amount": "5"
+        }
+      ],
+      "amount": "5"
+    },
+    {
+      "id": "12",
+      "name": "Free Steak & Cheese Egg Roll with Totchos",
+      "description": "Multi Item Bogo",
+      "scope": "MULTI_ITEM",
+      "item_id": [
+        {
+          "menuItemGuid": "ee6fc6cf-85f5-4099-8d42-ffcd33baa501",
+          "amount": "3"
+        },
+        {
+          "menuItemGuid": "27e5e6ac-6ea8-4844-b7b6-4090006018b1",
+          "amount": "0"
+        }
+      ],
+      "amount": "3",
+      "type": "MULTI_ITEM"
+    },
+    {
+      "id": "13",
+      "name": "Random Amount off STK CH Eggroll & Totchos",
+      "description": "Random Multi Item",
+      "scope": "MULTI_ITEM",
+      "item_id": [
+        {
+          "menuItemGuid": "ee6fc6cf-85f5-4099-8d42-ffcd33baa501",
+          "amount": "0"
+        },
+        {
+          "menuItemGuid": "27e5e6ac-6ea8-4844-b7b6-4090006018b1",
+          "amount": "0"
+        }
+      ],
+      "amount": "0",
+      "type": "RANDOM"
     }
   ],
   "transactions": []
