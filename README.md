@@ -1,7 +1,9 @@
 # Toast Loyalty API example implementation
 
 This repository provides an example implementation of the Toast loyalty 
-integration API. 
+integration API. For more information about developing a Toast POS system loyalty program 
+integration, see [Building a Loyalty Program Integration](https://doc.toasttab.com/Ie5QH/apiBuildingALoyaltyIntegration.html)
+in the _Toast API Developer's Guide_.
 
 This example implementation is a basic server written in Node.js that 
 handles loyalty transaction requests from the Toast POS system.
