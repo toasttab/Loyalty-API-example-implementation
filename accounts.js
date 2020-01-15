@@ -244,6 +244,11 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
     }
   }
 
+  var preDiscounntAmount = check.amount;
+  for (var i in redemptions) {
+    preDiscounntAmount += redemptions[i].amount;
+  }
+
   // offer id and its quantity for all available offers in this account
   var availableRewards_id_quantity_map = {};
   for (var i in availableRewards) {
@@ -273,7 +278,7 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
           }
         }
         if (!rejected) {
-          availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
+          availableRedemptions.push(updateRedemption(reward, redemptions[i], check, preDiscounntAmount));
           if (redemptions_id_quantity_map[id]) {
             redemptions_id_quantity_map[id]++
           } else {
@@ -290,12 +295,12 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
             rejectedRedemptions.push(redemption);
           } else {
             redemptions_id_quantity_map[id]++;
-            availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
+            availableRedemptions.push(updateRedemption(reward, redemptions[i], check, preDiscounntAmount));
           }
         } else {
           if (availableQuantity > 0) {
             redemptions_id_quantity_map[id] = 1;
-            availableRedemptions.push(updateRedemption(reward, redemptions[i], check));
+            availableRedemptions.push(updateRedemption(reward, redemptions[i], check, preDiscounntAmount));
           } else {
             var redemption = {
               "redemption": redemptions[i],
@@ -349,11 +354,10 @@ function inquireOrRedeem(identifier, check, redemptions, transactionType) {
   return result;
 }
 
-function updateRedemption(reward, redemption, check) {
+function updateRedemption(reward, redemption, check, preDiscounntAmount) {
   if (reward.type == "PERCENT") {
     if (reward.scope == "CHECK") {
-      var amount = check.totalAmount + redemption.amount - check.taxAmount;
-      redemption.amount = amount * reward.amount / 100;
+      redemption.amount = (preDiscounntAmount * reward.amount / 100).toFixed(2);
     }
   }
   if (reward.type == "RANDOM") {
