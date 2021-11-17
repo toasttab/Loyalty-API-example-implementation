@@ -111,10 +111,10 @@ http
             return successResponse(res, responseBody);
           case "LOYALTY_REVERSE":
             var info = getPropOrErr(body, "reverseTransactionInformation");
-            identifier = getPropOrErr(info, "loyaltyIdentifier");
+            identifier = info["loyaltyIdentifier"];
             var transactionId = getPropOrErr(info, "transactionId");
             var redemptions = info["redemptions"];
-            reverse(identifier, transactionId, redemptions);
+            if (identifier != null) reverse(identifier, transactionId, redemptions);
             return successResponse(res, responseBody);
           default:
             return errorResponse(res, "ERROR_INVALID_TOAST_TRANSACTION_TYPE");
