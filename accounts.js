@@ -35,28 +35,8 @@ function transfer(fromIdentifier, toIdentifier) {
 function accrue(identifier, points) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
-  var newPoints = account.points + points;
-  if (Math.floor(newPoints / 50) > 0) {
-    var quantity = Math.floor(newPoints / 50);
-    var availableRewards = account.availableRewards;
-    var reward;
-    for (var i in availableRewards) {
-      if (availableRewards[i].id == "2") {
-        reward = availableRewards[i];
-      }
-    }
-    if (reward) {
-      reward.quantity = reward.quantity + quantity;
-    } else {
-      var redemption = {
-        "id": "2",
-        "quantity": quantity
-      }
-      account.availableRewards.push(redemption);
-    }
-    newPoints = newPoints % 50;
-  }
-  account.points = newPoints;
+  account.points += points
+
   db.update(account);
 }
 
@@ -135,33 +115,7 @@ function reverseRedeem(identifier, transaction, reverseRedemptions) {
 function reverseAccrue(identifier, transaction) {
   var account = findByNumber(identifier);
   if (!account) throw "ERROR_ACCOUNT_INVALID";
-
-  var points = transaction.amount;
-  if (points < account.points) {
-    account.points = account.points - points;
-  } else {
-    var availableRewards = account.availableRewards;
-    var reward;
-    var rewardIndex;
-    for (var i in availableRewards) {
-      if (availableRewards[i].id == "2") {
-        reward = availableRewards[i];
-        rewardIndex = i;
-      }
-    }
-    if (!reward) throw "ERROR_UNABLE_TO_REVERSE";
-
-    var currentPoints = reward.quantity * 50 + account.points;
-    var afterReversePoints = currentPoints - points;
-    if (Math.floor(afterReversePoints / 50) > 0) {
-      var quantity = Math.floor(afterReversePoints / 50);
-      reward.quantity = quantity;
-      afterReversePoints = afterReversePoints % 50;
-    } else {
-      account.availableRewards.splice(rewardIndex, 1);
-    }
-    account.points = afterReversePoints;
-  }
+  account.points -= transaction.amount
 
   db.update(account);
   transaction.reversed = true;
